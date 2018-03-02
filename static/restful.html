@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>vue API</title>
+	<style>
+	[v-cloak] { display: none; }
+	</style>
+</head>
+<body>
+	<div id="app" v-cloak>
+		<div v-for="task in tasks">
+			<div>
+				{{ task.id }}
+				{{ task.title }}
+				<button @click="deleteTask(task.id)">x</button>
+			</div>
+			<div>
+				{{ task.description }}
+			</div>
+		</div>
+
+		<div class="box">
+			<input type="text" v-model="title"><br>
+			<textarea cols="30" rows="10" v-model="description"></textarea>
+			<button @click="addTask">add</button>
+		</div>
+	</div>
+	<script src="dist/js/vue.js"></script><!--Vue.js v2.5.13-->
+	<script src="dist/js/axios.js"></script><!--axios v0.17.1-->
+	<script>
+	var vm = new Vue({
+		el: '#app',
+		data: {
+			title: '',
+			id: '',
+			description: '',
+			tasks:[]
+		},
+	  mounted: function(){
+				var self = this;
+				axios.get('/todo/api/tasks')
+				.then(function(response){
+					self.tasks = response.data.tasks;
+					console.log(response.data);
+				})
+				.catch(function (error){
+					console.log(error)
+				});
+		},
+		methods: {
+			addTask: function() {
+					var self = this;
+					axios.post('/todo/api/addTask', {
+						title: self.title,
+						description: self.description
+					})
+					.then(function(response) {
+						self.tasks = response.data.tasks;
+					})
+					.catch(function (error){
+						console.log(error)
+					});
+				},
+				deleteTask: function(id) {
+					var self = this;
+					axios.post('/todo/api/deleteTask', {
+						id: id
+					}).then(function(response) {
+						self.tasks = response.data.tasks;
+					});
+				}
+		}
+	})
+	</script>
+</body>
+</html>

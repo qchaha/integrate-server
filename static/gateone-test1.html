@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>Basic Embedding Gate One</title>
+    <script src="dist/js/gateone.js"></script>
+    <script src="dist/js/ssh.js"></script>
+  </head>
+  <body>
+<div>Hello lienhua34</div>
+<!-- Decide where you want to put Gate One -->
+    <div id="gateone_container" style="position: relative; width: 60em; height: 30em;">
+        <div id="gateone"></div>
+    </div>
+
+    <script>
+    localStorage.clear();
+    var newTerminal = function() {
+        // Introducing the superSandbox()!  Use it to wrap any code that you don't want to load until dependencies are met.
+        // In this example we won't call newTerminal() until GateOne.Terminal and GateOne.Terminal.Input are loaded.
+        GateOne.Base.superSandbox("NewExternalTerm", ["GateOne", "GateOne.Net",  "GateOne.Terminal.Input", "GateOne.Terminal"], function(window, undefined) {
+            "use strict";
+            var existingContainer = GateOne.Utils.getNode('#'+GateOne.prefs.prefix+'container');
+        var container = GateOne.Utils.createElement('div', {
+                'id': 'container', 'class': 'terminal', 'style': {'height': '100%', 'width': '100%'}
+        });
+        var gateone = GateOne.Utils.getNode('#gateone');
+        var termNum = 0;
+        // Don't actually submit the form
+        if (!existingContainer) {
+                GateOne.Utils.deleteCookie('ANONYMOUS', '/', ''); // Deletes the 'gateone_user' cookie
+                console.log("ff")
+                gateone.appendChild(container);
+        } else {
+                container = existingContainer;
+        }
+        // Create the new terminal
+        termNum = GateOne.Terminal.newTerminal(null, null, container);
+
+        });
+    };
+
+    // Uses newExternalTerminal as GateOne.init()'s callback.
+    // The callback will be called after Gate One is initialized.
+    window.onload = function() {
+        // Initialize Gate One:
+        GateOne.init({
+            url: 'https://192.168.197.152:5001',
+            embedded: true,
+            autoConnectURL: 'ssh://root@192.168.197.151:22'
+        }, newTerminal);
+    };
+  </script>
+  </body>
+
+
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>vue test</title>
+	<style>
+	[v-cloak] { display: none; }
+	</style>
+</head>
+<body>
+	<div id="app">
+			<div>
+				{{ date }}
+			</div>
+			<div>
+				{{ cpu_idle }}
+			</div>
+      <button @click="refresh">xxxxxxxxxx</button>
+	</div>
+	<script src="dist/js/vue.js"></script><!--Vue.js v2.5.13-->
+	<script src="dist/js/axios.js"></script><!--axios v0.17.1-->
+	<script>
+	var vm = new Vue({
+		el: '#app',
+		data: {
+			date: '',
+			cpu_idle: ''
+		},
+		methods: {
+			refresh: function() {
+					var self = this;
+					axios.get('/kafka/get_host_info')
+					.then(function(response) {
+            console.log(response.data.host_data)
+						self.date = response.data.host_data.date;
+            self.cpu_idle = response.data.host_data.cpu_idle;
+					})
+					.catch(function (error){
+						console.log(error)
+					});
+				}
+		}
+	})
+	</script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>Basic Embedding Gate One</title>
+    <script src="dist/js/gateone.js"></script>
+    <script src="dist/js/ssh.js"></script>
+    <script src="dist/js/axios.js"></script>
+    <script src="dist/js/playback.js"></script>
+  </head>
+  <body>
+<div>Hello lienhua34</div>
+<!-- Decide where you want to put Gate One -->
+    <div id="gateone_container" style="position: relative; width: 1280px; height: 600px;">
+        <div id="gateone"></div>
+    </div>
+    <button onclick="clicked()">create</button>
+    <button onclick="GateOne.User.logout();">exit</button>
+
+    <script>
+    //autoConnectURL will be storage in html5 local storage, the autoConnectURL don't change when you change the value in your code ,so we need to clear
+    localStorage.clear();
+
+    var auth = {};
+    axios.get('/api/get_gateone_auth')
+    .then(function(response){
+        //console.log(response.data)
+        auth = response.data;
+    })
+    .catch(function(error){
+      console.log("error catched:" + error)
+    })
+
+
+    var newTerminal = function() {
+        // Introducing the superSandbox()!  Use it to wrap any code that you don't want to load until dependencies are met.
+        // In this example we won't call newTerminal() until GateOne.Terminal and GateOne.Terminal.Input are loaded.
+        GateOne.Base.superSandbox("NewExternalTerm", ["GateOne", "GateOne.Net",  "GateOne.Terminal.Input", "GateOne.Terminal"], function(window, undefined) {
+            //"use strict";
+            var existingContainer = GateOne.Utils.getNode('#'+GateOne.prefs.prefix+'container');
+        var container = GateOne.Utils.createElement('div', {
+                'id': 'container', 'class': 'terminal', 'style': {'height': '100%', 'width': '100%'}
+        });
+        var gateone = GateOne.Utils.getNode('#gateone');
+        var termNum = 0;
+        // Don't actually submit the form
+        if (!existingContainer) {
+                gateone.appendChild(container);
+        } else {
+                container = existingContainer;
+        }
+        // Create the new terminal
+        termNum = GateOne.Terminal.newTerminal(null, null, container);
+        });
+    };
+    // Uses newExternalTerminal as GateOne.init()'s callback.
+    // The callback will be called after Gate One is initialized.
+    function clicked() {
+        // Initialize Gate One:
+        GateOne.init({
+            url: 'https://192.168.197.152:5001',
+            embedded: true,
+            autoConnectURL: 'ssh://root:root123@192.168.197.152:22',
+            auth: auth,
+            showPlaybackControls: true
+        }, newTerminal);
+    };
+  </script>
+  </body>
+
+
+</html>

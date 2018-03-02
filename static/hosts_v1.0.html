@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<!--
+This is a starter template page. Use this page to start your new project from
+scratch. This page gets rid of all links and provides the needed markup only.
+-->
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>devops rookie</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+
+  <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
+  page. However, you can choose any other skin. Make sure you
+  apply the skin class to the body tag so the changes take effect. -->
+  <link rel="stylesheet" href="dist/css/skins/skin-purple.min.css">
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+  <!-- Google Font -->
+  <link rel="stylesheet" href="dist/css/google-font.css">
+
+  <!-- for flots label-->
+  <style>
+
+  .legendLabel { padding-right:20px; }
+
+  .fade-enter-active
+  {
+    transition: opacity 0.5s;
+    opacity: 0;
+  }
+
+  .fade-leave-active
+  {
+    transition: opacity 1s;
+    opacity: 0;
+  }
+
+
+  </style>
+
+  <style>[v-cloak] { display: none; }</style>
+
+
+</head>
+
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+<body class="hold-transition skin-purple sidebar-mini">
+
+
+  <div class="wrapper">
+    <!----------------------
+    Main Header
+    ------------------------>
+    <script src="dist/module-js/main-header.js"></script>
+
+    <!------------------------------------------
+    Left side column. contains the logo and sidebar
+    -------------------------------------------->
+    <script src="dist/module-js/main-sidebar.js"></script>
+
+    <!------------------------------------------
+    Content Wrapper. Contains page content
+    -------------------------------------------->
+
+    <div class="content-wrapper">
+      <!-- Content Header (Page header) -->
+      <section class="content-header">
+        <h1>主机
+          <small>Hosts</small>
+        </h1>
+        <ol class="breadcrumb"></ol>
+      </section>
+      <!--/. content-header-->
+
+      <section class="content container-fluid">
+        <!--hosts list-->
+        <box class="col-md-5">
+          <div class="box box-info">
+            <div class="box-header with-border">
+              <h3 class="box-title">主机列表</h3>
+              <div class="box-tools pull-right">
+                <div class="has-feedback">
+                  <input type="text" class="form-control input-sm" placeholder="Search Hosts">
+                  <span class="glyphicon glyphicon-search form-control-feedback"></span>
+                </div>
+              </div>
+              <!-- /.box-tools -->
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <div class="mailbox-controls">
+                <!-- Check all button -->
+                <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i></button>
+                <button type="button" class="btn"><i class="fa fa-trash-o"></i></button>
+                <button type="button" class="btn"><i class="fa fa-reply"></i></button>
+                <button type="button" class="btn"><i class="fa fa-share"></i></button>
+                <button type="button" class="btn"><i class="fa fa-refresh"></i></button>
+                <!-- /.pull-right -->
+              </div>
+              <div class="table-responsive mailbox-messages">
+                <table class="table table-hover table-striped" id="vuetable" v-cloak>
+                  <thead>
+                    <div class="box-header with-border">
+                      <tr>
+                        <th style="width: 28px">序号</th>
+                        <th style="width: 90px">IP地址</th>
+                        <th style="width: 50px">主机名</th>
+                        <th>数据库类型</th>
+                        <th>状态</th>
+                      </tr>
+                    </div>
+                  </thead>
+                  <tbody style="font-weight:normal;">
+                    <tr v-for="host in host_info">
+                      <td>{{ host.id + '.' }}</td>
+                      <td class="mailbox-name"><a href="#" v-on:click="show_echarts(host.id, $event)">{{ host.ip }}</a></td>
+                      <td class="mailbox-subject" v-bind:id="host.id">{{ host.hostname }}</td>
+                      <td class="mailbox-attachment">{{ host.app_type }}</td>
+                      <td><span class="badge bg-green" style="width: 40px" v-if="online[host.id]">在线</span>
+                          <span class="badge bg-red" style="width: 40px" v-if="offline[host.id]">离线</span>
+                          <i class="fa fa-spinner fa-spin" v-if="loading[host.id]"></i>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <!-- /.table -->
+              </div>
+              <!-- /.mail-box-messages -->
+            </div>
+            <!-- /.box-body -->
+          </div>
+        </box>
+        <!--./hosts list-->
+
+
+
+        <div class="col-md-7" style="height: 550px">
+          <!-- Widget: user widget style 1 -->
+          <div class="box box-widget widget-user-2">
+            <!-- Add the bg color to the header using any of the bg-* classes -->
+            <div class="widget-user-header bg-blue" id="selected_info" v-cloak>
+              <span class="info-box-icon bg-blue"><i class="fa fa-desktop"></i></span>
+              <h2 class="widget-user-desc" style="padding: 0 0 0 40px">IP地址：{{ selected_ip }}</h3>
+              <h3 class="widget-user-username" style="padding: 0 0 0 40px">主机名：{{ selected_hostname }}</h5>
+            </div>
+            <div class="box-footer no-padding" id="item_loading" >
+              <ul class="nav nav-stacked" v-bind:style="{display: show}">
+                <div class="overlay fade-enter-active fade-leave-active" v-bind:style="{opacity: loading_status}">
+                  <!-- Custom Tabs -->
+                  <li>
+                    <div class="nav-tabs-custom tab-warning">
+                    <ul class="nav nav-tabs">
+                      <li class="active"><a href="#tab_cpu" data-toggle="tab" aria-expanded="true">CPU实时状态</a></li>
+                      <li class=""><a href="#tab_mem" data-toggle="tab" aria-expanded="false">内存实时状态</a></li>
+                      <li><a href="#tab_net" data-toggle="tab">网络实时流量</a></li>
+                    </ul>
+                    <div class="tab-content">
+                      <div class="tab-pane active" id="tab_cpu">
+
+                        <!--cpu usage charts-->
+                        <box>
+                          <!-- interactive chart -->
+                          <div class="box-header with-border">
+                            <i class="fa fa-bar-chart-o"></i>
+                            <h3 class="box-title">CPU实时状态</h3><p></p>
+                            <div class="box-tools pull-right">实时
+                              <div class="btn-group" id="realtime" data-toggle="btn-toggle">
+                                <button type="button" class="btn btn-default btn-xs active" data-toggle="on">On</button>
+                                <button type="button" class="btn btn-default btn-xs" data-toggle="off">Off</button>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="box-body">
+                            <div id="interactive-cpu" style="margin: -38px 0 -30px -30px;"></div>
+                          </div>
+                          <!-- /.box-body-->
+                        </box>
+                        <!--/.cpu usage charts-->
+
+                      </div>
+                      <!-- /.tab-pane -->
+                      <div class="tab-pane" id="tab_mem">
+                        <!--memory usage charts-->
+                        <box>
+                          <!-- interactive chart -->
+                          <div class="box-header with-border">
+                            <i class="fa fa-bar-chart-o"></i>
+                            <h3 class="box-title">内存实时状态</h3><p></p>
+                            <div class="box-tools pull-right">实时
+                              <div class="btn-group" id="realtime" data-toggle="btn-toggle">
+                                <button type="button" class="btn btn-default btn-xs active" data-toggle="on">On</button>
+                                <button type="button" class="btn btn-default btn-xs" data-toggle="off">Off</button>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="box-body">
+                            <div id="interactive-memory" style="margin: -38px 0 -30px -30px;;"></div>
+                          </div>
+                          <!-- /.box-body-->
+                        </box>
+                        <!--/.memory usage charts-->
+                      </div>
+                      <!-- /.tab-pane -->
+                      <div class="tab-pane" id="tab_net">
+                        <!--network usage charts-->
+                        <!-- interactive chart -->
+                        <div class="box-header with-border">
+                          <i class="fa fa-bar-chart-o"></i>
+                          <h3 class="box-title">网络实时流量</h3><p></p>
+                          <div class="box-tools pull-right">实时
+                            <div class="btn-group" id="realtime" data-toggle="btn-toggle">
+                              <button type="button" class="btn btn-default btn-xs active" data-toggle="on">On</button>
+                              <button type="button" class="btn btn-default btn-xs" data-toggle="off">Off</button>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="box-body">
+                          <div id="interactive-network" style="margin: -38px 0 -30px -30px;"></div>
+                        </div>
+                        <!-- /.box-body-->
+                      </div>
+                      <!--/.network usage charts-->
+                    </div>
+                    <!-- /.tab-content -->
+                  </div>
+                </li>
+                  <!-- nav-tabs-custom -->
+              </div>
+              </ul>
+              <div class="col-md-15 fade-enter-active fade-leave-active" style="display:none; height: 450px;" v-bind:style="{opacity: loading_status, display: code404}">
+                  <div class="error-page col-md-7" style="padding: 30px 0 0 30px">
+                    <i class=" headline fa fa-warning text-yellow" style="padding: 0 30px 0 0"></i>
+                    <h2 class="headline text-yellow" style="margin: 0 0 0 0; ">code: 404 </h2>
+                  </div>
+                  <!-- /.error-page -->
+                  <div class="col-md-12" style="padding: 30px">
+                    <div class="box box-solid">
+                      <div class="box-header">
+                        <i class="fa fa-exclamation-circle text-yellow"></i>
+                        <h3 class="box-title">警告：</h3>
+                      </div>
+                      <!-- /.box-header -->
+                      <div class="box-body">
+                        <blockquote>
+                          <p style="font-size:24px">获取主机实时信息失败，请尝试检查以下项目：</p>
+                          <small style="font-size:18px;padding: 0 0 10px 0">1. 当前主机可能处于离线状态，请检查主机网络连通性。</small>
+                          <small style="font-size:18px;padding: 0 0 10px 0">2. 当前主机代理无法收集实时数据，请检查主机代理状态。</small>
+                        </blockquote>
+                      </div>
+                      <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+                </div>
+              </div>
+              <div class="overlay"><i class="fa fa-refresh fa-spin" style="opacity: 0.8;font-size: 96px" v-bind:style="{display: loading}"></i></div>
+            </div>
+          </div>
+          <!-- /.widget-user -->
+        </div>
+
+      </section>
+      <!--./content container-fluid-->
+    </div>
+    <!--./wrapper-->
+
+    <!----------------------
+    Main Footer
+    ------------------------>
+    <script src="dist/js/vue.js"></script>
+    <script src="dist/module-js/main-footer.js"></script>
+  </div>
+  <!--./wrapper-->
+
+  <!-- Page script -->
+
+
+	<script src="dist/js/axios.js"></script><!--axios v0.17.1-->
+
+  <script src="dist/js/echarts.js"></script><!--echarts v3.2.8-->
+  <script src="dist/js/themes/shine.js"></script><!--theme for echarts-->
+  <script src="dist/js/themes/macarons.js"></script><!--theme for echarts-->
+
+
+  <script src="bower_components/jquery/dist/jquery.min.js"></script>  <!-- jQuery 3 -->
+  <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>  <!-- Bootstrap 3.3.7 -->
+  <script src="bower_components/datatables.net/js/jquery.dataTables.min.js"></script>  <!-- DataTables -->
+  <script src="bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>  <!-- DatassTables -->
+
+  <script>
+
+  /****************************************************************************
+    三个vue变量，对应获取CPU,MEMORY,NETWORK,由于vue获取控件id时，不支持<box>标签，
+    因此需要创建三个，分别指向CPU,MEMORY,NETWORK
+  *****************************************************************************/
+
+
+  /****************************************************************************
+    //V1.0
+    //取数是独立的点，用此方法时，echarts上的点需要等待60s左右，才能把点填充完成，
+    //出来的效果不好看，前60s还会看到X轴在动态过渡跳动
+
+  var v_vue = new Vue({
+    el: '#interactive-cpu',
+    data: {
+      hostname : '',
+      date : '',
+      ip : '',
+      cpu_usr : '',
+      cpu_sys : '',
+      cpu_idle : '',
+      cpu_wait : '',
+      mem_used : '',
+      mem_buffer : '',
+      mem_cache : '',
+      mem_free : '',
+      disk_read : '',
+      disk_write : '',
+      net_recv : '',
+      net_send : ''
+    },
+    methods: {
+      refresh: function() {
+        var self = this;
+        axios.get('/kafka/get_host_info_v1.0')
+        .then(function(response) {
+          //console.log(response.data.host_data)
+          self.date = response.data.host_data.date;
+          self.hostname = response.data.host_data.hostname;
+          self.ip = response.data.host_data.date;
+          self.cpu_usr = response.data.host_data.cpu_usr;
+          self.cpu_sys = response.data.host_data.cpu_sys;
+          self.cpu_idle = response.data.host_data.cpu_idle;
+          self.cpu_wait = response.data.host_data.cpu_wait;
+          self.mem_used = response.data.host_data.mem_used;
+          self.mem_buffer = response.data.host_data.mem_buffer;
+          self.mem_cache = response.data.host_data.mem_cache;
+          self.mem_free = response.data.host_data.mem_free;
+          self.disk_read = response.data.host_data.disk_read;
+          self.disk_write = response.data.host_data.disk_write;
+          self.net_recv = response.data.host_data.net_recv;
+          self.net_send = response.data.host_data.net_send;
+        })
+        .catch(function (error){
+          console.log(error)
+        });
+      }
+    }
+  })
+  var v_vue = new Vue({
+    el: '#interactive-memory',
+    data: {
+      hostname : '',
+      date : '',
+      ip : '',
+      cpu_usr : '',
+      cpu_sys : '',
+      cpu_idle : '',
+      cpu_wait : '',
+      mem_used : '',
+      mem_buffer : '',
+      mem_cache : '',
+      mem_free : '',
+      disk_read : '',
+      disk_write : '',
+      net_recv : '',
+      net_send : ''
+    },
+    methods: {
+      refresh: function() {
+        var self = this;
+        axios.get('/kafka/get_host_info_v1.0')
+        .then(function(response) {
+          //console.log(response.data.host_data)
+          self.date = response.data.host_data.date;
+          self.hostname = response.data.host_data.hostname;
+          self.ip = response.data.host_data.date;
+          self.cpu_usr = response.data.host_data.cpu_usr;
+          self.cpu_sys = response.data.host_data.cpu_sys;
+          self.cpu_idle = response.data.host_data.cpu_idle;
+          self.cpu_wait = response.data.host_data.cpu_wait;
+          self.mem_used = response.data.host_data.mem_used;
+          self.mem_buffer = response.data.host_data.mem_buffer;
+          self.mem_cache = response.data.host_data.mem_cache;
+          self.mem_free = response.data.host_data.mem_free;
+          self.disk_read = response.data.host_data.disk_read;
+          self.disk_write = response.data.host_data.disk_write;
+          self.net_recv = response.data.host_data.net_recv;
+          self.net_send = response.data.host_data.net_send;
+        })
+        .catch(function (error){
+          console.log(error)
+        });
+      }
+    }
+  })
+  var v_vue = new Vue({
+    el: '#interactive-network',
+    data: {
+      hostname : '',
+      date : '',
+      ip : '',
+      cpu_usr : '',
+      cpu_sys : '',
+      cpu_idle : '',
+      cpu_wait : '',
+      mem_used : '',
+      mem_buffer : '',
+      mem_cache : '',
+      mem_free : '',
+      disk_read : '',
+      disk_write : '',
+      net_recv : '',
+      net_send : ''
+    },
+    methods: {
+      refresh: function() {
+        var self = this;
+        axios.get('/kafka/get_host_info')
+        .then(function(response) {
+          //console.log(response.data.host_data)
+          self.date = response.data.host_data.date;
+          self.hostname = response.data.host_data.hostname;
+          self.ip = response.data.host_data.date;
+          self.cpu_usr = response.data.host_data.cpu_usr;
+          self.cpu_sys = response.data.host_data.cpu_sys;
+          self.cpu_idle = response.data.host_data.cpu_idle;
+          self.cpu_wait = response.data.host_data.cpu_wait;
+          self.mem_used = response.data.host_data.mem_used;
+          self.mem_buffer = response.data.host_data.mem_buffer;
+          self.mem_cache = response.data.host_data.mem_cache;
+          self.mem_free = response.data.host_data.mem_free;
+          self.disk_read = response.data.host_data.disk_read;
+          self.disk_write = response.data.host_data.disk_write;
+          self.net_recv = response.data.host_data.net_recv;
+          self.net_send = response.data.host_data.net_send;
+        })
+        .catch(function (error){
+          console.log(error)
+        });
+      }
+    }
+  })
+  *****************************************************************************/
+
+  var global_settimeout_id = 0;
+  var global_loading_ticks = 0;
+
+  var v_vue_table = new Vue({
+    el: '#vuetable',
+    data: {
+      host_info: '',
+      selected_hostname: '',
+      selected_ip: '',
+      host_alive_info: [],
+      online: [],
+      offline: [],
+      loading: []
+    },
+    mounted: function(){
+        var self = this;
+        //从mysql中获取所有主机信息
+        axios.get('/api/find_all_host_v1.0')
+        .then(function(response){
+          self._data.host_info = response.data.host_info;
+          self._data.selected_hostname = self._data.host_info[0].hostname;
+          self._data.selected_ip = self._data.host_info[0].ip;
+          v_vue_host_info.show_selected_info();
+          for( var i = 1; i <= self._data.host_info.length; i++ )
+          {
+            self.loading[i] = true;
+          }
+          v_vue_table.check_host_alive();
+          update();
+          $(function () {
+            $('#vuetable').DataTable({
+              'paging'      : true,
+              'lengthChange': true,
+              'searching'   : true,
+              'ordering'    : true,
+              'info'        : true,
+              'autoWidth'   : true
+            })
+          })
+        })
+        .catch(function (error){
+          console.log(error)
+        });
+      },
+      methods:{
+        show_echarts: function(host_id, event){
+          this._data.selected_hostname = document.getElementById(host_id).innerHTML;
+          this._data.selected_ip = event.target.innerHTML;
+          v_vue_host_info.show_selected_info();
+          v_vue_table.check_host_alive();
+          global_loading_ticks = 0;
+          realtime = 'on';
+          update();
+          v_vue_loading.loading_complete();
+        },
+        check_host_alive: function(){
+          //得到所有主机信息后，检查所有主机的是否在线的状态
+          var self = this;
+          for( var i = 1; i <= self.host_alive_info.length; i++ )
+          {
+            Vue.set(v_vue_table.online, i, false);
+            Vue.set(v_vue_table.offline, i, false);
+            Vue.set(v_vue_table.loading, i, true);
+          }
+
+          axios.get('/api/check_host_alive_v1.0')
+          .then(function(response){
+            self.host_alive_info = response.data.host_alive_info;
+            for( var i = 0; i < self.host_alive_info.length; i++ )
+            {
+              if( self.host_alive_info[i] == "online" )
+              {
+                Vue.set(v_vue_table.online, i + 1, true);
+                Vue.set(v_vue_table.offline, i + 1, false);
+                Vue.set(v_vue_table.loading, i + 1, false);
+              }
+              else
+              {
+                Vue.set(v_vue_table.online, i + 1, false);
+                Vue.set(v_vue_table.offline, i + 1, true);
+                Vue.set(v_vue_table.loading, i + 1, false);
+              }
+            }
+            //当查询状态是否在线后，需要删除原先的表格，重新进行创建
+            $(function () {
+              $('#vuetable').DataTable({
+                'paging'      : true,
+                'lengthChange': true,
+                'searching'   : true,
+                'ordering'    : true,
+                'info'        : true,
+                'autoWidth'   : true,
+                'destroy'     : true
+              })
+            })
+          })
+          .catch(function (error){
+            console.log(error)
+          });
+        }
+      }
+    });
+
+    var v_vue_host_info = new Vue({
+      el: '#selected_info',
+      data: {
+        selected_ip: '',
+        selected_hostname: ''
+      },
+      methods: {
+        show_selected_info: function(){
+          this.selected_ip = v_vue_table._data.selected_ip;
+          this.selected_hostname = v_vue_table._data.selected_hostname;
+        }
+      }
+    })
+
+    var v_vue_loading = new Vue({
+      el: '#item_loading',
+      data: {
+        loading_status: 0.2,
+        loading: '',
+        show: '',
+        code404: 'none'
+      },
+      methods: {
+        loading_complete: function(){
+          if( global_loading_ticks > 1 )
+          {
+            this.loading_status = 1;
+            this.loading = 'none';
+          }
+          else
+          {
+            this.loading_status = 0.2;
+            this.loading = '';
+          }
+        }
+      }
+    })
+
+
+
+
+  /****************************************************************************
+   //V1.1
+   //取数是在数据库中读出，是1分钟内连续的点，用此方法时，echarts马上显示全部描绘的点，
+   //效果比较好看，还需要配搭loading效果过渡，这样完美
+  ****************************************************************************/
+  var v_vue_echarts = new Vue({
+    data: {
+      hostname : [],
+      date : [],
+      ip : [],
+      cpu_usr : [],
+      cpu_sys : [],
+      cpu_idle : [],
+      cpu_wait : [],
+      mem_used : [],
+      mem_buffer : [],
+      mem_cache : [],
+      mem_free : [],
+      disk_read : [],
+      disk_write : [],
+      net_recv : [],
+      net_send : []
+    },
+    methods: {
+      refresh: function() {
+        var self = this;
+        axios.get( '/kafka/get_host_info_v1.1/' + v_vue_host_info._data.selected_hostname )
+        .then(function(response) {
+          //console.log(response.data.host_data)
+          v_vue_loading.code404 = 'none';
+          v_vue_loading.show = '';
+          for(var i = 0; i < response.data.host_data.length; i++)
+          {
+            self.date[i] = response.data.host_data[i].date;
+            self.hostname[i] = response.data.host_data[i].hostname;
+            self.ip[i] = response.data.host_data[i].date;
+            self.cpu_usr[i] = response.data.host_data[i].cpu_usr;
+            self.cpu_sys[i] = response.data.host_data[i].cpu_sys;
+            self.cpu_idle[i] = response.data.host_data[i].cpu_idle;
+            self.cpu_wait[i] = response.data.host_data[i].cpu_wait;
+            self.mem_used[i] = response.data.host_data[i].mem_used;
+            self.mem_buffer[i] = response.data.host_data[i].mem_buffer;
+            self.mem_cache[i] = response.data.host_data[i].mem_cache;
+            self.mem_free[i] = response.data.host_data[i].mem_free;
+            self.disk_read[i] = response.data.host_data[i].disk_read;
+            self.disk_write[i] = response.data.host_data[i].disk_write;
+            self.net_recv[i] = response.data.host_data[i].net_recv;
+            self.net_send[i] = response.data.host_data[i].net_send;
+          }
+        })
+        .catch(function (error){
+          console.log(error)
+          if(error.response.status == 404)
+          {
+            v_vue_loading.code404 = '';
+            v_vue_loading.show = 'none';
+            global_loading_ticks = 3;
+          }
+        });
+      }
+    }
+  })
+
+
+
+  function convert_kb( traffic )
+  {
+    var re = "";
+    if( (traffic).substring((traffic).length - 1, (traffic).length) === "k" )
+    {
+      re = parseInt((traffic).substring(0, (traffic).length - 1));
+    }
+    else if( (traffic).substring((traffic).length - 1, (traffic).length) === "B" )
+    {
+      re = parseInt(parseInt((traffic).substring(0, (traffic).length - 1)) / 1024);
+    }
+    else if( (traffic).substring((traffic).length - 1, (traffic).length) === "M" )
+    {
+      re = parseInt((traffic).substring(0, (traffic).length - 1)) * 1024;
+    }
+    return re;
+  }
+
+  function getTotalMemory(v_vue)
+  {
+    var re = 0;
+    var max = 0;
+    var max_temp = 0;
+    for(var i = 0; i < v_vue.date.length; i++)
+    {
+      max_temp = parseInt((v_vue.mem_used[i]).substring(0, (v_vue.mem_used[i]).length - 1)) +
+      parseInt((v_vue.mem_buffer[i]).substring(0, (v_vue.mem_buffer[i]).length - 1)) +
+      parseInt((v_vue.mem_cache[i]).substring(0, (v_vue.mem_cache[i]).length - 1)) +
+      parseInt((v_vue.mem_free[i]).substring(0, (v_vue.mem_free[i]).length - 1));
+      if( max_temp > max )
+      {
+        max = max_temp;
+      }
+      else
+      {
+        max = max;
+      }
+    }
+
+    var digits = (max.toString()).length;
+    var lead = parseInt((max.toString()).substring(0,1)) + 1;
+    re = lead.toString();
+    for(var i = 1; i < digits; i++)
+    {
+      re = re + "0";
+    }
+    return re;
+  }
+
+  function getTopNetworkIO(data_send, data_recv)
+  {
+      var re = "";
+      var max = 0;
+      var max_send = 0;
+      var max_recv = 0;
+
+      for( var i = 0; i < data_send.length; i++ )
+      {
+        if( max_send <= data_send[ i ] )
+        {
+          max_send = data_send[ i ];
+        }
+        else
+        {
+          max_send = max_send;
+        }
+      }
+
+      for( var i = 0; i < data_recv.length; i++ )
+      {
+        if( max_recv <= data_recv[ i ] )
+        {
+          max_recv = data_recv[ i ];
+        }
+        else
+        {
+          max_recv = max_recv;
+        }
+      }
+
+      if( max_send >= max_recv )
+      {
+        max = max_send;
+      }
+      else
+      {
+        max = max_recv;
+      }
+
+      var digits = (max.toString()).length;
+      var lead = parseInt((max.toString()).substring(0,1)) + 1;
+      re = lead.toString();
+      for(var i = 1; i < digits; i++)
+      {
+         re = re + "0";
+      }
+      //console.log(re)
+    return re;
+  }
+
+
+  var dom_cpu = document.getElementById("interactive-cpu");
+  var dom_mem = document.getElementById("interactive-memory");
+  var dom_net = document.getElementById("interactive-network");
+
+  var resizeMainContainer = function ()
+  {
+    dom_cpu.style.width = window.innerWidth*0.5+'px';
+    dom_cpu.style.height = window.innerHeight*0.5+'px';
+    //dom_cpu.style.height = '370px';
+    dom_mem.style.width = window.innerWidth*0.5+'px';
+    dom_mem.style.height = window.innerHeight*0.5+'px';
+    //dom_mem.style.height = '370px';
+    dom_net.style.width = window.innerWidth*0.5+'px';
+    dom_net.style.height = window.innerHeight*0.5+'px';
+    //dom_net.style.height = '370px';
+  };
+  //设置div容器高宽
+  resizeMainContainer();
+
+  var chart_cpu = echarts.init(dom_cpu,"shine");
+  var chart_mem = echarts.init(dom_mem,"shine");
+  var chart_net = echarts.init(dom_net,"shine");
+
+  // 初始化图表
+  $(window).on('resize',function()
+  {//
+    //屏幕大小自适应，重置容器高宽
+    resizeMainContainer();
+    chart_cpu.resize();
+    chart_mem.resize();
+    chart_net.resize();
+  });
+
+  var app = {};
+  option_cpu = null;
+  option_mem = null;
+  option_net = null;
+
+  option_cpu =
+  {
+      title: {
+          text: '',
+          subtext: ''
+      },
+      tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+              type: 'cross',
+              label: {
+                  backgroundColor: '#283b56'
+              }
+          }
+      },
+      legend: {
+          data:['cpu_usr', 'cpu_sys', 'cpu_wait'],
+          itemGap: 50
+      },
+      dataZoom: {
+          show: false,
+          start: 0,
+          end: 100
+      },
+      xAxis: [
+          {
+              type: 'category',
+              splitLine:{show: false},
+              data: []
+          }
+      ],
+      yAxis: [
+          {
+              type: 'value',
+              scale: true,
+              name: '',
+              max: 100,
+              min: 0,
+              axisLabel:{formatter:'{value} %'}
+              //boundaryGap: [0.4, 0.4]
+          }
+      ],
+      series: [
+          {
+              name:'cpu_usr',
+              type:'line',
+              //areaStyle: {normal: {}},
+              data: []
+          },
+          {
+            name:'cpu_sys',
+            type:'line',
+            //areaStyle: {normal:{}},
+            data: []
+
+          },
+          {
+            name:'cpu_wait',
+            type:'line',
+            //areaStyle: {normal: {}},
+            data: []
+          }
+      ]
+  };
+
+
+  option_mem =
+  {
+      title: {
+          text: '',
+          subtext: ''
+      },
+      tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+              type: 'cross',
+              label: {
+                  backgroundColor: '#283b56'
+              }
+          }
+      },
+      legend: {
+          data:['mem_used', 'mem_buffer', 'mem_cache'],
+          itemGap: 50
+      },
+      dataZoom: {
+          show: false,
+          start: 0,
+          end: 100
+      },
+      xAxis: [
+          {
+              type: 'category',
+              splitLine:{show: false},
+              data: []
+          }
+      ],
+      yAxis: [
+          {
+              type: 'value',
+              scale: true,
+              name: '',
+              max: 100,
+              min: 0,
+              axisLabel:{}
+              //boundaryGap: [0.4, 0.4]
+          }
+      ],
+      series: [
+          {
+              name:'mem_used',
+              type:'line',
+              data: []
+          },
+          {
+            name:'mem_buffer',
+            type:'line',
+            data: []
+          },
+          {
+            name:'mem_cache',
+            type:'line',
+            data: []
+          }
+      ]
+  };
+
+
+  option_net =
+  {
+      title: {
+          text: '',
+          subtext: ''
+      },
+      tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+              type: 'cross',
+              label: {
+                  backgroundColor: '#283b56'
+              }
+          }
+      },
+      legend: {
+          data:['net_send', 'net_recv'],
+          itemGap: 50
+      },
+      dataZoom: {
+          show: false,
+          start: 0,
+          end: 100
+      },
+      xAxis: [
+          {
+              type: 'category',
+              splitLine:{show: false},
+              data: []
+          }
+      ],
+      yAxis: [
+          {
+              type: 'value',
+              scale: true,
+              name: '',
+              max: 7000,
+              min: 0,
+              axisLabel: {}
+              //boundaryGap: [0.4, 0.4]
+          }
+      ],
+      series: [
+          {
+              name:'net_send',
+              type:'line',
+              data: []
+          },
+          {
+            name:'net_recv',
+            type:'line',
+            data: []
+          }
+      ]
+  };
+
+  if (option_cpu && typeof option_cpu === "object")
+  {
+      chart_cpu.setOption(option_cpu, true);
+  }
+  if (option_mem && typeof option_mem === "object")
+  {
+      chart_mem.setOption(option_mem, true);
+  }
+  if (option_net && typeof option_net === "object")
+  {
+      chart_net.setOption(option_net, true);
+  }
+  //app.count = 11;
+  function draw_cpu ()
+  {
+    //axisData = (new Date()).toLocaleTimeString().replace(/^\D*/,'');
+
+    var data0 = option_cpu.series[0].data;
+    var data1 = option_cpu.series[1].data;
+    var data2 = option_cpu.series[2].data;
+    var time = "";
+    var old_time = "";
+
+    for(var i = 0; i < v_vue_echarts.date.length; i++)
+    {
+      //option.xAxis[0].data.shift();
+      //option.xAxis[0].data.push(axisData);
+      time = v_vue_echarts.date[i];
+      if( i != 0 )
+      {
+        old_time = v_vue_echarts.date[i - 1];
+
+        if( old_time > time )
+        {
+          console.log("cpu axis value error, time be passed!");
+          continue;
+        }
+      }
+
+      if(time != "")
+      {
+        var hours = (new Date(time)).getHours() < 10 ? "0" + (new Date(time)).getHours() : (new Date(time)).getHours();
+        var minutes = (new Date(time)).getMinutes() < 10 ? "0" + (new Date(time)).getMinutes() : (new Date(time)).getMinutes();
+        var seconds = (new Date(time)).getSeconds() < 10 ? "0" + (new Date(time)).getSeconds() : (new Date(time)).getSeconds();
+
+        if(option_cpu.xAxis[0].data.length > 20)
+        option_cpu.xAxis[0].data.shift();
+        option_cpu.xAxis[0].data.push(hours + ":" + minutes + ":" + seconds);
+      }
+
+
+      if(data0.length > 20)
+      data0.shift();
+      data0.push(v_vue_echarts.cpu_usr[i]);
+      if(data1.length > 20)
+      data1.shift();
+      data1.push(v_vue_echarts.cpu_sys[i]);
+      if(data2.length > 20)
+      data2.shift();
+      data2.push(v_vue_echarts.cpu_wait[i]);
+    }
+    chart_cpu.setOption(option_cpu);
+  }
+
+  function draw_mem ()
+  {
+    //axisData = (new Date()).toLocaleTimeString().replace(/^\D*/,'');
+    var data0 = option_mem.series[0].data;
+    var data1 = option_mem.series[1].data;
+    var data2 = option_mem.series[2].data;
+
+
+    var time = "";
+    var old_time = "";
+
+
+    //yaxis data
+    for(var i = 0; i < v_vue_echarts.date.length; i++)
+    {
+      //xaxis time data
+      time = v_vue_echarts.date[i];
+      if( i != 0 )
+      {
+        old_time = v_vue_echarts.date[i - 1];
+        if( old_time > time )
+        {
+          console.log("mem axis value error, time be passed!");
+          continue;
+        }
+      }
+      if(time != "")
+      {
+        var hours = (new Date(time)).getHours() < 10 ? "0" + (new Date(time)).getHours() : (new Date(time)).getHours();
+        var minutes = (new Date(time)).getMinutes() < 10 ? "0" + (new Date(time)).getMinutes() : (new Date(time)).getMinutes();
+        var seconds = (new Date(time)).getSeconds() < 10 ? "0" + (new Date(time)).getSeconds() : (new Date(time)).getSeconds();
+
+        if(option_mem.xAxis[0].data.length > 20)
+        option_mem.xAxis[0].data.shift();
+        option_mem.xAxis[0].data.push(hours + ":" + minutes + ":" + seconds);
+      }
+
+      if(data0.length > 20)
+      data0.shift();
+      data0.push((v_vue_echarts.mem_used[i]).substring(0, (v_vue_echarts.mem_used[i]).length - 1));
+      if(data1.length > 20)
+      data1.shift();
+      data1.push((v_vue_echarts.mem_buffer[i]).substring(0, (v_vue_echarts.mem_buffer[i]).length - 1));
+      if(data2.length > 20)
+      data2.shift();
+      data2.push((v_vue_echarts.mem_cache[i]).substring(0, (v_vue_echarts.mem_cache[i]).length - 1));
+      //option.xAxis[0].data.shift();
+      //option.xAxis[0].data.push(axisData);
+
+      //set yaxis scale value
+      option_mem.yAxis[0].max = getTotalMemory(v_vue_echarts);
+      option_mem.yAxis[0].axisLabel.formatter = "{value} " + (v_vue_echarts.mem_used[i]).substring((v_vue_echarts.mem_used[i]).length - 1, (v_vue_echarts.mem_used[i]).length);
+    }
+
+    chart_mem.setOption(option_mem);
+
+  }
+
+  function draw_net ()
+  {
+    //axisData = (new Date()).toLocaleTimeString().replace(/^\D*/,'');
+
+    var data0 = option_net.series[0].data;
+    var data1 = option_net.series[1].data;
+    var send_k = "";
+    var recv_k = "";
+    var time = "";
+    var old_time = "";
+    for(var i = 0; i < v_vue_echarts.date.length; i++)
+    {
+      //option.xAxis[0].data.shift();
+      //option.xAxis[0].data.push(axisData);
+      time = v_vue_echarts.date[i];
+      if( i != 0 )
+      {
+        old_time = v_vue_echarts.date[i - 1];
+        if( old_time > time )
+        {
+          console.log("net axis value error, time be passed!");
+          continue;
+        }
+      }
+      if(time != "")
+      {
+        var hours = (new Date(time)).getHours() < 10 ? "0" + (new Date(time)).getHours() : (new Date(time)).getHours();
+        var minutes = (new Date(time)).getMinutes() < 10 ? "0" + (new Date(time)).getMinutes() : (new Date(time)).getMinutes();
+        var seconds = (new Date(time)).getSeconds() < 10 ? "0" + (new Date(time)).getSeconds() : (new Date(time)).getSeconds();
+
+        if(option_net.xAxis[0].data.length > 20)
+        option_net.xAxis[0].data.shift();
+        option_net.xAxis[0].data.push(hours + ":" + minutes + ":" + seconds);
+      }
+
+      send_k = convert_kb(v_vue_echarts.net_send[i]);
+      recv_k = convert_kb(v_vue_echarts.net_recv[i]);
+      if(data0.length > 20)
+      data0.shift();
+      data0.push(send_k);
+      if(data1.length > 20)
+      data1.shift();
+      data1.push(recv_k);
+
+      //set yaxis scale value
+      option_net.yAxis[0].max = getTopNetworkIO( data0, data1 );
+      option_net.yAxis[0].axisLabel.formatter = "{value} k";
+
+    }
+    chart_net.setOption(option_net);
+  }
+
+  var updateInterval = 3000 //Fetch data ever x milliseconds
+  var realtime       = 'on' //If == to on then fetch data every x seconds. else stop fetching
+  function update()
+  {
+    v_vue_echarts.refresh();
+    draw_cpu();
+    draw_mem();
+    draw_net();
+
+    clearTimeout(global_settimeout_id);
+    if (realtime === 'on')
+    {
+      global_settimeout_id = setTimeout(update, updateInterval);
+    }
+    global_loading_ticks++;
+    v_vue_loading.loading_complete();
+  }
+
+  //REALTIME TOGGLE
+  $('#realtime .btn').click(function ()
+  {
+    if ($(this).data('toggle') === 'on') {
+      realtime = 'on'
+    }
+    else {
+      realtime = 'off'
+    }
+    update()
+  })
+
+
+
+
+
+
+
+
+
+
+
+ /*
+    实现动态图表jquery.flot
+ */
+//  $(function () {
+    /*
+    * CPU usage chars
+    * Flot Interactive Chart
+    * -----------------------
+    */
+    // We use an inline data source in the example, usually data would
+    // be fetched from a server
+
+    //for display data, not for release
+/*    var cpu_usr_data = [], cpu_sys_data = [], cpu_wait_data = [], cpu_value = [], time = "" ,time_a = [], coordinate = [], totalPointsX = 100, totalCpuY = 100, oneline = 0
+
+    function get_cpu_data() {
+      v_vue.refresh()
+
+      if (cpu_sys_data.length > 0)
+      {
+        cpu_sys_data = cpu_sys_data.slice(1)
+      }
+      if(time_a.length > 0)
+      {
+        time_a = time_a.slice(1)
+      }
+
+      time = new Date(v_vue.date.replace( /-/g , "/" ))
+
+      if( time == "Invalid Date" )
+      {
+        return ""
+      }
+      else
+      {
+        while (cpu_sys_data.length < totalPointsX)
+        {
+          time = new Date(v_vue.date.replace( /-/g , "/" ))
+          time = time.getTime()
+          time_a.push(time)
+          cpu_sys_data.push(v_vue.cpu_sys)
+        }
+        // Zip the generated y values with the x values
+        var res_cpu = []
+        for (var i = 0; i < cpu_sys_data.length; ++i) {
+          res_cpu.push([time_a[i], cpu_sys_data[i]])
+        }
+        var formatText = [{'label':' mem_used','data': res_cpu}]
+        return formatText;
+      }
+    }
+
+    var flot_cpu_options = {
+      series: {
+        lines: {
+          show: true,
+          fill: true,                                                                        //true是分区图，false是折线图
+          //fillColor: { colors: [{ opacity: 0.2 }, { opacity: 0.2 }, { opacity: 0.2}] },      //透明选项
+        }
+      },
+      grid  : {
+        borderColor: '#f3f3f3',
+        borderWidth: 1,
+        tickColor  : '#f3f3f3',
+        backgroundColor: { colors: ["#ffffff", "#EFFFFF"] }                                 //渐变色
+      },
+      yaxis : {
+        min : 0,
+        max : totalCpuY,
+        show: true,
+        tickFormatter: function (v, axis) {
+          if (v % 25 == 0) {
+            return v + "%";
+          } else {
+            return "";
+          }
+        }
+      },
+      xaxis: {
+        mode: "time",
+        tickSize: [2, "second"],
+        tickFormatter: function (v, axis) {
+          var date = new Date(v);
+          if (date.getSeconds() % 20 == 0) {
+            var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+            var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+            var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+
+            return hours + ":" + minutes + ":" + seconds;
+          } else {
+            return "";
+          }
+        }
+      },
+      axisLabel: "Time",
+      axisLabelUseCanvas: true,
+      axisLabelFontSizePixels: 12,
+      axisLabelFontFamily: 'Verdana, Arial',
+      axisLabelPadding: 10,
+      legend: {
+        //  noColumns: 3,
+        //  position: "nw",
+        //  margin: [250, -45],
+      }
+    };
+    //cpu usage charts
+    var interactive_plot_cpu = $.plot('#interactive-cpu', get_cpu_data(), flot_cpu_options)
+
+
+
+
+    var mem_used_data = [], mem_buffer_data = [], mem_cache_data = []
+    function get_mem_data() {
+      v_vue.refresh()
+
+      if (mem_used_data.length > 0)
+      mem_used_data = mem_used_data.slice(1)
+      while (mem_used_data.length < totalPointsX) {
+        mem_used_data.push(v_vue.mem_used.replace( /([A-Z]|[a-z])/, "" ))
+      }
+      // Zip the generated y values with the x values
+      var res_mem_used_data = []
+      for (var i = 0; i < mem_used_data.length; ++i) {
+        res_mem_used_data.push([i, mem_used_data[i]])
+      }
+
+      if (mem_buffer_data.length > 0)
+      mem_buffer_data = mem_buffer_data.slice(1)
+      while (mem_buffer_data.length < totalPointsX) {
+        mem_buffer_data.push(v_vue.mem_buffer.replace( /([A-Z]|[a-z])/, "" ))
+      }
+      // Zip the generated y values with the x values
+      var res_mem_buffer_data = []
+      for (var i = 0; i < mem_buffer_data.length; ++i) {
+        res_mem_buffer_data.push([i, mem_buffer_data[i]])
+      }
+
+      if (mem_cache_data.length > 0)
+      mem_cache_data = mem_cache_data.slice(1)
+      while (mem_cache_data.length < totalPointsX) {
+        mem_cache_data.push(v_vue.mem_cache.replace( /([A-Z])/, "" ))
+      }
+      // Zip the generated y values with the x values
+      var res_mem_cache_data = []
+      for (var i = 0; i < mem_cache_data.length; ++i) {
+        res_mem_cache_data.push([i, mem_cache_data[i]])
+      }
+
+      var formatText = [{'label':' mem_used','data': res_mem_used_data} , {'label':' mem_buffer','data': res_mem_buffer_data}, {'label':' mem_cache','data': res_mem_cache_data}]
+      return formatText;
+    }
+
+    var flot_mem_options = {
+      series: {
+        lines: {
+          show: true,
+          fill: true,
+          fillColor: { colors: [{ opacity: 0.2 }, { opacity: 0.2 }, { opacity: 0.2}] },
+        }
+      },
+      colors: ["#6BF3AD", "#FFC000", "#1774FF"],
+      grid  : {
+        borderColor: '#f3f3f3',
+        borderWidth: 1,
+        tickColor  : '#f3f3f3',
+        backgroundColor: { colors: ["#ffffff", "#EFFFFF"] }                                 //渐变色
+      },
+      yaxis : {
+        min : 0,
+        max : 3000,
+        show: true
+      },
+      xaxis : {
+        show: true
+      }
+    };
+    //memory usage charts
+    var interactive_plot_memory = $.plot('#interactive-memory', get_mem_data(), flot_mem_options)
+
+
+
+
+
+    var net_send_data = [], net_recv_data = []
+    function get_net_data() {
+      v_vue.refresh()
+
+      if (net_send_data.length > 0)
+      net_send_data = net_send_data.slice(1)
+      while (net_send_data.length < totalPointsX) {
+        net_send_data.push(v_vue.net_send.replace( /([A-Z]|[a-z])/, "" ))
+      }
+      // Zip the generated y values with the x values
+      var res_net_send_data = []
+      for (var i = 0; i < net_send_data.length; ++i) {
+        res_net_send_data.push([i, net_send_data[i]])
+      }
+
+      if (net_recv_data.length > 0)
+      net_recv_data = net_recv_data.slice(1)
+      while (net_recv_data.length < totalPointsX) {
+        net_recv_data.push(v_vue.net_recv.replace( /([A-Z]|[a-z])/, "" ))
+      }
+      // Zip the generated y values with the x values
+      var res_net_recv_data = []
+      for (var i = 0; i < net_recv_data.length; ++i) {
+        res_net_recv_data.push([i, net_recv_data[i]])
+      }
+
+      var formatText = [{'label':' net_send','data': res_net_send_data} , {'label':' net_recv','data': res_net_recv_data}]
+      return formatText;
+    }
+
+    var flot_net_options = {
+      series: {
+        lines: {
+          show: true,
+          fill: true,
+          fillColor: { colors: [{ opacity: 0.2 }, { opacity: 0.2 }, { opacity: 0.2}] },
+        }
+      },
+      colors: ["red", "blue"],
+      grid  : {
+        borderColor: '#f3f3f3',
+        borderWidth: 1,
+        tickColor  : '#f3f3f3',
+        backgroundColor: { colors: ["#ffffff", "#EFFFFF"] }                                 //渐变色
+      },
+      yaxis : {
+        min : 0,
+        max : 3000,
+        show: true
+      },
+      xaxis : {
+        show: true
+      }
+    };
+    //network usage charts
+    var interactive_plot_network = $.plot('#interactive-network', get_net_data(), flot_net_options)
+
+
+    var updateInterval = 1000 //Fetch data ever x milliseconds
+    var realtime       = 'on' //If == to on then fetch data every x seconds. else stop fetching
+    function update() {
+
+      //interactive_plot_cpu.setData(get_cpu_data())
+      // Since the axes don't change, we don't need to call plot.setupGrid()
+      //interactive_plot_cpu.draw()
+      $.plot($("#interactive-cpu"), get_cpu_data(), flot_cpu_options)
+      $.plot($("#interactive-memory"), get_mem_data(), flot_mem_options)
+      $.plot($("#interactive-network"), get_net_data(), flot_net_options)
+
+      //interactive_plot_memory.setData(get_mem_data())
+      // Since the axes don't change, we don't need to call plot.setupGrid()
+      //interactive_plot_memory.draw()
+
+      //interactive_plot_network.setData(get_net_data())
+      // Since the axes don't change, we don't need to call plot.setupGrid()
+      //interactive_plot_network.draw()
+      if (realtime === 'on')
+      setTimeout(update, updateInterval)
+    }
+    //INITIALIZE REALTIME DATA FETCHING
+    if (realtime === 'on') {
+      update()
+    }
+    //REALTIME TOGGLE
+    $('#realtime .btn').click(function () {
+      if ($(this).data('toggle') === 'on') {
+        realtime = 'on'
+      }
+      else {
+        realtime = 'off'
+      }
+      update()
+    })
+  })
+*/
+  </script>
+</body>
+</html>
