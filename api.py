@@ -1,19 +1,22 @@
 #!flask/bin/python
 from flask import Flask, jsonify, make_response, request, abort, render_template, json
+from itsdangerous import (TimedJSONWebSignatureSerializer
+                          as Serializer, BadSignature, SignatureExpired)
 from pymongo import MongoClient
 import pymysql
 import datetime
 import subprocess
+import time
 
 # 静态文件的放置路径，可根据实际情况设置，这里设置为默认路径：'./static/'
 app = Flask(__name__, static_url_path='')
 
-
-
 class Monitor:
 
-    #全局变量，保存hostname和ip的对应信息在程序内存中
+    #静态变量，保存hostname和ip的对应信息在程序内存中
     host_table_inmem = []
+    #静态变量，保存jwt,类内访问时需要Monitor.jwt_token
+    jwt_token = ""
 
     """初始化对象私有变量"""
     def __init__(self):
@@ -26,6 +29,9 @@ class Monitor:
         self.mongo_srvip = "192.168.197.152"
         self.mongo_port = 27017
         self.mongo_db_name = "test"
+        self.jwt_secret_key = "verify_complex"
+        self.jwt_salt_key = "auth_salt_verylong"
+        self.jwt_expire_time = 20
 
     """获得gateone api认证"""
     def get_gateone_auth():
@@ -186,6 +192,37 @@ class Monitor:
               re = "offline"
         return re
 
+    """JWT 生成token"""
+    def generate_token(self):
+        """
+        JWT（json web token）一共包含三个内容：
+        1.头部；
+        2.payload(s.dumps()的内容)；
+        3.签名（secret_key,salt_key）
+        Serializer()函数自动生成头部和签名，只需要payload写进入
+        """
+        s = Serializer( secret_key = self.jwt_secret_key, salt = self.jwt_salt_key, expires_in = self.jwt_expire_time )
+        timestamp = time.time()
+        Monitor.jwt_token = s.dumps( { "admin_user" : "admin" , "admin_password" : "admin123", "iat": timestamp } ).decode("utf-8")
+        return "generate token seccessful!"
+
+    """JWT 校验token"""
+    def verify_token( self ):
+        s = Serializer( secret_key = self.jwt_secret_key, salt = self.jwt_salt_key )
+        #print(request.json['token'])
+        #print(Monitor.jwt_token)
+        try:
+            data = s.loads(Monitor.jwt_token)
+        #token expired
+        except SignatureExpired:
+            return "token expired!"
+        #invalid token
+        except BadSignature:
+            return "invalid token! signature may be modified!"
+        except:
+            return "token require error!"
+        return data
+
 """
 def mping(i,q):
     n = 10
@@ -260,6 +297,18 @@ def root():
 def not_found(error):
     return make_response(jsonify({'error': 'Pages Not found'}), 404)
 
+#令牌生成
+@app.route('/api/generate_token', methods = ['GET'])
+def generate_token():
+    ins = Monitor()
+    msg = ins.generate_token()
+    return jsonify({ "msg" : msg})
+
+@app.route('/api/verify_token', methods = ['GET'])
+def verify_token():
+    ins = Monitor()
+    data = ins.verify_token()
+    return jsonify({ 'data' : data })
 
 if __name__ == '__main__':
     app.run(host='192.168.197.152',port=5000,debug=True)
@@ -305,7 +354,6 @@ def get_task(task_id):
         if task['id'] == task_id:
             re = task;
     return jsonify({'task': re})
-
 
 #POST方法API，添加数据项
 @app.route('/todo/api/addTask', methods=['POST'])
