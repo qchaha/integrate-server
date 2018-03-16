@@ -80,6 +80,7 @@
   <script src="plugins/iCheck/icheck.min.js"></script>
   <script src="dist/js/axios.js"></script>
   <script src="dist/js/vue.js"></script>
+  <script src="dist/js/jquery.md5.js"></script>
   <script>
     $(function () {
       $('input').iCheck({
@@ -99,12 +100,21 @@
       methods:{
         login: function(){
           var self = this;
-          axios.post('/api/verify_token', {
-            admin_user: self.admin_user,
-            admin_password: self.admin_password
+          encrypt_password = $.md5(self.admin_password)
+          axios.post('/api/login_auth_v1.0', {
+            username: self.admin_user,
+            encrypt_password: encrypt_password
           })
           .then(function(response){
-            console.log(response)
+            if( response.data.rt_token == "invalid token!" )
+            {
+              console.log("again")
+            }
+            else
+            {
+              console.log(response.data.rt_token)
+              location.href='hosts.html?visit_token=' + response.data.rt_token
+            }
           })
           .catch(function(error){
             console.log("error when login:" + error)

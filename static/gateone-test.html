@@ -9,9 +9,8 @@
     <script src="dist/js/playback.js"></script>
   </head>
   <body>
-<div>Hello lienhua34</div>
 <!-- Decide where you want to put Gate One -->
-    <div id="gateone_container" style="position: relative; width: 1280px; height: 600px;">
+    <div id="gateone_container" style="position: relative; width: 1280px; height: 600px">
         <div id="gateone"></div>
     </div>
     <button onclick="clicked()">create</button>
@@ -60,11 +59,19 @@
         GateOne.init({
             url: 'https://192.168.197.152:5001',
             embedded: true,
-            autoConnectURL: 'ssh://root:root123@192.168.197.152:22',
+            disableTermTransitions:true,
+            showTitle:false,
+            showToolbar:false,
+            fillContainer:true,
+            autoConnectURL: 'ssh://root@192.168.197.152:22',
             auth: auth,
-            showPlaybackControls: true
+            showPlaybackControls: false
         }, newTerminal);
     };
+
+    window.onload = function(){
+        clicked();
+    }
   </script>
   </body>
 

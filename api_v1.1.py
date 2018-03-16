@@ -7,9 +7,6 @@ import pymysql
 import datetime
 import subprocess
 import time
-from guacamole.client import GuacamoleClient 
-import uuid
-import threading
 
 # 静态文件的放置路径，可根据实际情况设置，这里设置为默认路径：'./static/'
 app = Flask(__name__, static_url_path='')
@@ -28,23 +25,23 @@ class Monitor:
         self.mysql_user = "root"
         self.mysql_pwd = "root123"
         self.mysql_db_name = "test"
+        self.mysql_db_zabbix = "zabbix"
         self.sql_fetch_all_ip = "select ip_address from t_host order by ip_address"
-        self.sql_fetch_all_host = "select * from t_host order by ip_address"
+        self.sql_fetch_all_host = "select ip from interface"
         self.mongo_srvip = "192.168.197.152"
         self.mongo_port = 27017
         self.mongo_db_name = "test"
         self.jwt_secret_key = "verify_complex"
         self.jwt_salt_key = "auth_salt_verylong"
         self.jwt_visit_expire_time = 3600
-        self.wetty_config_file = "/root/wetty/tossh.sh"
 
     """获得gateone api认证"""
     @staticmethod
     def get_gateone_auth():
         import time, hmac, hashlib, json
-        secret = b'NzYxNjMxNjFjNzFmNGQxOGE3NDJjYjlkNjk0MmEyN2NhO'
+        secret = b'ZDhiMjZiMGU0Y2YxNGJjOTkxZmE3ZjMwZTZiNDQwOWRhZ'
         authobj = {
-            'api_key': "NmFlNzM4MmFjY2RjNDc5NDlmYTM0MTlmN2I4YjgwMDRhZ",
+            'api_key': "ZjhlNDljMTNmNzlmNDYxYjhlOGJlY2I4MDVmOWJiN2U2M",
             'upn': "haha",
             'timestamp': str(int(time.time() * 1000)),
             'signature_method': 'HMAC-SHA1',
@@ -77,9 +74,9 @@ class Monitor:
             abort(404)
         return jresults
 
-    """从mysql中，获取所有主机的列表"""
+    """从mysql中，获取所有主机的列表,是从zabbix中取"""
     def find_all_host(self):
-        db = pymysql.connect( self.mysql_srvip, self.mysql_user, self.mysql_pwd, self.mysql_db_name )
+        db = pymysql.connect( self.mysql_srvip, self.mysql_user, self.mysql_pwd, self.mysql_db_zabbix )
         cursor = db.cursor()
         try:
             cursor.execute(self.sql_fetch_all_host)
@@ -88,24 +85,10 @@ class Monitor:
             for result in results:
                 dresults = {}
                 dresults['id'] = result[0]
-                dresults['ip_address'] = result[1]
-                dresults['hostname'] = result[2]
-                dresults['admin_user'] = result[3]
-                dresults['admin_password'] = result[4]
-                dresults['os_type'] = result[5]
-                dresults['os_detail'] = result[6]
-                dresults['is_ssh'] = result[7]
-                dresults['ssh_port'] = result[8]
-                dresults['is_rdp'] = result[9]
-                dresults['rdp_port'] = result[10]
-                dresults['is_vnc'] = result[11]
-                dresults['vnc_port'] = result[12]
-                dresults['is_ftp'] = result[13]
-                dresults['ftp_port'] = result[14]
-                dresults['is_scp'] = result[15]
-                dresults['scp_port'] = result[16]
-                dresults['is_http'] = result[17]
-                dresults['http_port'] = result[18]
+                dresults['hostname'] = result[1]
+                dresults['ip_address'] = result[2]
+                dresults['os_type'] = result[3]
+                dresults['app_type'] = result[4]
                 jresults.append(dresults)
                 Monitor.host_table_inmem.append([result[1],result[2]])
                 #print(Monitor.host_table_inmem)
@@ -204,7 +187,6 @@ class Monitor:
     def ping( self, ip ):
         ret = subprocess.call("ping -c 1 %s" % ip,shell=True,stdout=open('/dev/null','w'),stderr=subprocess.STDOUT)
         re = ''
-        #返回值为0代表命令正常退出
         if ret == 0:
               #print("%s | online" % result[0])
               re = "online"
@@ -268,18 +250,6 @@ class Monitor:
             rt_msg = -1
         #print("visit_token: " + Monitor.jwt_visit_token)
         return rt_msg
-
-    """打开web tty"""
-    def open_wetty( self ):
-        cmd = "sed -i -e '1cssh root@" + request.json['ip'] + "' " + self.wetty_config_file
-        ret = subprocess.call(cmd, shell=True,stdout=open('/dev/null','w'),stderr=subprocess.STDOUT)
-        re = ''
-        #返回值为0代表命令正常退出
-        if ret == 0:
-            re = "edit wetty config file success!"
-        else:
-            re = "edit wetty config file error!"
-        return re
 
 
 """
@@ -392,61 +362,6 @@ def test():
         rt_msg = "no because visit is :" + Monitor.jwt_visit_token
     return jsonify({ "rt_msg": rt_msg })
 
-
-@app.route('/api/open_wetty_v1.0', methods = ['POST'])
-def open_wetty():
-    ins = Monitor()
-    re = ins.open_wetty()
-    return jsonify({"can_open_wetty": re})
-
-
-
-@app.route('/api/guacamole_tunnel_v1.0', methods = ['POST'])
-def guacamole_tunnel():
-    qs = request.connect
-    print(qs)
-    """
-    if qs == 'connect':
-        return _do_connect(request)
-    else:
-        tokens = qs.split(':')
-        if len(tokens) >= 2:
-            if tokens[0] == 'read':
-                return _do_read(request, tokens[1])
-            elif tokens[0] == 'write':
-                return _do_write(request, tokens[1])
-
-    return HttpResponse(status=400)
-    print(request)
-    sockets = {}
-    sockets_lock = threading.RLock()
-    read_lock = threading.RLock()
-    write_lock = threading.RLock()
-    pending_read_request = threading.Event()
-
-    client = GuacamoleClient( "192.168.197.152" , "4822" )
-    client.handshake(protocol = 'vnc',
-                     hostname = '192.168.197.141',
-                     port = 15900,
-                     password = 'admin')
-    cache_key = str(uuid.uuid4())
-    with sockets_lock:
-        sockets[cache_key] = client
-
-    response = HttpResponse(content=cache_key)  
-    response['Cache-Control'] = 'no-cache'
-
-    return response
-    while True:
-        instruction = client.receive()
-        #print(instruction)
-        if instruction:
-            print(instruction)
-        else:
-            client.close()
-            break
-            """
-    return "rr"
 
 if __name__ == '__main__':
     app.run(host='192.168.197.152',port=5000,debug=True)

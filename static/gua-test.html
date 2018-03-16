@@ -1,0 +1,115 @@
+<!DOCTYPE HTML>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+
+    <head>
+        <title>Guacamole (EXAMPLE)</title>
+    </head>
+
+    <body>
+
+        <!-- Display -->
+        <div id="display"></div>
+
+        <!-- Guacamole JavaScript API -->
+        <!--<script type="text/javascript" src="dist/js/guacamole/ArrayBufferReader.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/ArrayBufferWriter.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/AudioContextFactory.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/AudioPlayer.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/AudioRecorder.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/BlobReader.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/BlobWriter.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/Client.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/DataURIReader.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/Display.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/InputSink.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/InputStream.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/IntegerPool.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/JSONReader.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/Keyboard.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/Layer.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/Mouse.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/Namespace.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/Object.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/OnScreenKeyboard.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/OutputStream.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/Parser.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/RawAudioFormat.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/SessionRecording.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/Status.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/StringReader.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/StringWriter.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/Tunnel.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/Version.js"></script>-->
+        <script type="text/javascript" src="dist/js/guacamole/all.min.js"></script>
+
+        <!-- Init -->
+        <script type="text/javascript"> /* <![CDATA[ */
+
+            // Get display div from document
+            var display = document.getElementById("display");
+
+            // Instantiate client, using an HTTP tunnel for communications.
+            var guac = new Guacamole.Client(
+                new Guacamole.HTTPTunnel("/api/guac_tunnel_v1.0")
+            );
+
+            // Add client to display div
+            display.appendChild(guac.getDisplay().getElement());
+            
+            // Error handler
+            guac.onerror = function(error) {
+                alert(error);
+            };
+
+            // Connect
+            guac.connect();
+
+            // Disconnect on close
+            window.onunload = function() {
+                guac.disconnect();
+            }
+
+            // Mouse
+            var mouse = new Guacamole.Mouse(guac.getDisplay().getElement());
+
+            mouse.onmousedown = 
+            mouse.onmouseup   =
+            mouse.onmousemove = function(mouseState) {
+                guac.sendMouseState(mouseState);
+                console.log(mouseState)
+            };
+
+            // Keyboard
+            var keyboard = new Guacamole.Keyboard(document);
+
+            keyboard.onkeydown = function (keysym) {
+                guac.sendKeyEvent(1, keysym);
+            };
+
+            keyboard.onkeyup = function (keysym) {
+                guac.sendKeyEvent(0, keysym);
+            };
+
+        /* ]]> */ </script>
+
+    </body>
+
+</html>

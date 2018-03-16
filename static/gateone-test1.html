@@ -9,7 +9,7 @@
   <body>
 <div>Hello lienhua34</div>
 <!-- Decide where you want to put Gate One -->
-    <div id="gateone_container" style="position: relative; width: 60em; height: 30em;">
+    <div id="gateone_container" >
         <div id="gateone"></div>
     </div>
 
@@ -47,7 +47,7 @@
         GateOne.init({
             url: 'https://192.168.197.152:5001',
             embedded: true,
-            autoConnectURL: 'ssh://root@192.168.197.151:22'
+            autoConnectURL: 'ssh://root@192.168.197.152:22'
         }, newTerminal);
     };
   </script>
