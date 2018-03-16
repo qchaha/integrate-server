@@ -35,7 +35,6 @@ def _do_connect(request):
                      port=15900,
                      #username="administrator",
                      password="admin")
-    print("connect")
     cache_key = str(uuid.uuid4())
     with sockets_lock:
         sockets[cache_key] = client
@@ -45,7 +44,6 @@ def _do_connect(request):
 
 def _do_read(request, cache_key):
     pending_read_request.set()
-    print("read")
     def content():
         with sockets_lock:
             client = sockets[cache_key]
@@ -72,7 +70,6 @@ def _do_read(request, cache_key):
 
 
 def _do_write(request, cache_key):
-    print("write")
     with sockets_lock:
         client = sockets[cache_key]
 
