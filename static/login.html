@@ -112,8 +112,10 @@
             }
             else
             {
-              console.log(response.data.rt_token)
-              location.href='hosts.html?visit_token=' + response.data.rt_token
+              //console.log(response.data.rt_token)
+              localStorage.setItem('jwt', response.data.rt_token)
+              //location.href='hosts.html?visit_token=' + response.data.rt_token
+              location.href='hosts.html'
             }
           })
           .catch(function(error){

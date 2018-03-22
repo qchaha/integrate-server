@@ -1,5 +1,5 @@
 #!flask/bin/python
-from flask import Flask,request,Response,stream_with_context
+from flask import Flask,request,Response,abort,make_response,jsonify
 from guacamole.client import GuacamoleClient 
 import threading
 import uuid
@@ -50,6 +50,8 @@ class Guac():
         recv_thraed.setDaemon(True)
         recv_thraed.start()
 
+        Guac.is_auth = False
+
         while True:
             sleep(10)
 
@@ -87,12 +89,16 @@ class Guac():
 
 @app.route('/api/guac_tunnel_v1.0')
 def guac_tunnel():
-    ws = request.environ.get('wsgi.websocket')
-    if not ws:
-        print("Expected WebSocket request")
-    guac = Guac(Guac.ip, Guac.protocol, Guac.port, Guac.user, Guac.password)
-    guac.websockettunnel(ws)
-    print("going to exit tunnel!")
+    if Guac.is_auth:
+        ws = request.environ.get('wsgi.websocket')
+        if not ws:
+            print("Expected WebSocket request")
+        guac = Guac(Guac.ip, Guac.protocol, Guac.port, Guac.user, Guac.password)
+        guac.websockettunnel(ws)
+        print("going to exit tunnel!")
+    else:
+        print("authority is error!")
+        abort(404)
     return "200";
 
 
@@ -103,7 +109,13 @@ def guac_interface():
     Guac.user = request.form["user"]
     Guac.port = request.form["port"]
     Guac.password = request.form["password"]
+    Guac.is_auth = True
     return "fff"
+
+#404
+@app.errorhandler(404)
+def not_found(error):
+    return make_response(jsonify({'error': 'Pages Not found'}), 404)
 
 if __name__ == '__main__':
     #app.run(host='192.168.197.152',port=5001,debug=True,threaded=True)

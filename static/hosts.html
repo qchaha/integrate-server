@@ -78,6 +78,34 @@ scratch. This page gets rid of all links and provides the needed markup only.
     }
   </style>
 
+  <!--axios v0.17.1-->
+  <script src="dist/js/axios.js"></script>
+
+  <script>
+    jwt = localStorage.getItem('jwt')
+    var self = this;
+    if (jwt) 
+    {
+      axios.post('/api/isauth_v1.0', {
+        visit_token: jwt
+      })
+        .then(function (response) {
+          if (response.data.rt_msg == "auth ok!") {
+            console.log("auth ok!")
+          }
+          else {
+            location.href = 'login.html'
+          }
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+    }
+    else 
+    {
+      location.href = 'login.html'
+    }
+  </script>
 
 </head>
 
@@ -316,8 +344,6 @@ desired effect
 
   <!-- Page script -->
 
-  <!--axios v0.17.1-->
-  <script src="dist/js/axios.js"></script>
   <!--echarts v3.2.8-->
   <script src="dist/js/echarts.js"></script>
   <!--theme for echarts-->
@@ -405,32 +431,7 @@ desired effect
       },
       mounted: function() {
         var self = this;
-        var url = location.search; //获取url中"?"符后的字串 ('?modFlag=business&role=1')  
-        var theRequest = new Object();
-        if (url.indexOf("?") != -1) {
-          var str = url.substr(1); //substr()方法返回从参数值开始到结束的字符串；  
-          var strs = str.split("&");
-          for (var i = 0; i < strs.length; i++) {
-            theRequest[strs[i].split("=")[0]] = (strs[i].split("=")[1]);
-          }
-          console.log(theRequest); //此时的theRequest就是我们需要的参数；  
-        }
-        if(url != '')
-        {
-          axios.post('/api/test', theRequest)
-            .then(function (response) {
-              if (response.data.rt_msg == "auth ok!") {
-                console.log("ok!")
-              }
-              else {
-                location.href = 'login.html'
-              }
-            })
-            .catch(function (error) {
-              console.log(error)
-            })
-        }
-        self.find_all_host();
+        self.find_all_host();   
       },
       methods: {
         remote_desktop: function(ip, protocol){
