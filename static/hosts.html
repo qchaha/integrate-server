@@ -165,7 +165,7 @@ desired effect
                       <tr>
                         <th style="width: 10%">序号</th>
                         <th style="width: 20%">IP地址</th>
-                        <th style="width: 10%">主机名</th>
+                        <th style="width: 15%">主机名</th>
                         <th style="width: 10%">状态</th>
                         <th style="width: 10%">OS</th>
                         <th style="width: 30%">更多操作</th>
@@ -187,8 +187,8 @@ desired effect
                       <td><i class="fa fa-windows datatable-icon" v-if="host.os_type == 'Windows'"></i><i class="fa fa-linux datatable-icon" v-if="host.os_type == 'Linux'"></i></td>
                       <td>
                         <i style="padding: 0 15px 0 5px" class="fa fa-terminal datatable-icon" v-on:click="open_wetty(host.ip_address)"></i>
-                        <i style="padding: 0 15px 0 5px" class="fa fa-television datatable-icon"></i>
-                        <i style="padding: 0 15px 0 5px" class="fa fa-vimeo datatable-icon"></i>
+                        <i style="padding: 0 15px 0 5px" class="fa fa-television datatable-icon" v-on:click="remote_desktop(host.ip_address,'rdp')"></i>
+                        <i style="padding: 0 15px 0 5px" class="fa fa-vimeo datatable-icon" v-on:click="remote_desktop(host.ip_address,'vnc')"></i>
                         <i style="padding: 0 15px 0 5px" class="fa fa-folder-open datatable-icon"></i>
                         <i style="padding: 0 15px 0 5px" class="fa fa-folder-open-o datatable-icon"></i>
                         <i style="padding: 0 15px 0 5px" class="fa fa-internet-explorer datatable-icon"></i>
@@ -433,6 +433,18 @@ desired effect
         self.find_all_host();
       },
       methods: {
+        remote_desktop: function(ip, protocol){
+          axios.post("/api/remote_desktop_v1.0",{
+            ip : ip,
+            protocol : protocol,
+          })
+          .then(function(response){
+            window.open("http://192.168.197.152:5001/guacd_client.html")
+          })
+          .catch(function(error){
+            console.log(error)
+          })
+        },
         open_wetty: function(ip){
           axios.post('/api/open_wetty_v1.0',{
             ip : ip,

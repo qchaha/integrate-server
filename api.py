@@ -7,9 +7,7 @@ import pymysql
 import datetime
 import subprocess
 import time
-from guacamole.client import GuacamoleClient 
-import uuid
-import threading
+import requests
 
 # 静态文件的放置路径，可根据实际情况设置，这里设置为默认路径：'./static/'
 app = Flask(__name__, static_url_path='')
@@ -401,55 +399,27 @@ def open_wetty():
 
 
 
-@app.route('/api/guacamole_tunnel_v1.0', methods = ['POST'])
-def guacamole_tunnel():
-    qs = request.connect
-    print(qs)
-    """
-    if qs == 'connect':
-        return _do_connect(request)
-    else:
-        tokens = qs.split(':')
-        if len(tokens) >= 2:
-            if tokens[0] == 'read':
-                return _do_read(request, tokens[1])
-            elif tokens[0] == 'write':
-                return _do_write(request, tokens[1])
 
-    return HttpResponse(status=400)
-    print(request)
-    sockets = {}
-    sockets_lock = threading.RLock()
-    read_lock = threading.RLock()
-    write_lock = threading.RLock()
-    pending_read_request = threading.Event()
+@app.route('/api/remote_desktop_v1.0', methods = ['POST'])
+def show_remote_desktop():
+    protocol = request.json['protocol']
+    ip = request.json['ip']
+    if protocol == "rdp":
+        user = "administrator"
+        password = "1qaz@WSX"
+        port = 3389
+    elif protocol == "vnc":
+        user = ""
+        password = "admin"
+        port = 15900
+    payload = {'protocol': protocol, 'ip': ip, 'user': user, 'password': password, 'port': port}
+    r = requests.post("http://192.168.197.152:5001/api/guac_interface_v1.0", data = payload)
+    return "dd"
 
-    client = GuacamoleClient( "192.168.197.152" , "4822" )
-    client.handshake(protocol = 'vnc',
-                     hostname = '192.168.197.141',
-                     port = 15900,
-                     password = 'admin')
-    cache_key = str(uuid.uuid4())
-    with sockets_lock:
-        sockets[cache_key] = client
 
-    response = HttpResponse(content=cache_key)  
-    response['Cache-Control'] = 'no-cache'
-
-    return response
-    while True:
-        instruction = client.receive()
-        #print(instruction)
-        if instruction:
-            print(instruction)
-        else:
-            client.close()
-            break
-            """
-    return "rr"
 
 if __name__ == '__main__':
-    app.run(host='192.168.197.152',port=5000,debug=True)
+    app.run(host='192.168.197.152',port=5000,debug=True,threaded=True)
 
 
 

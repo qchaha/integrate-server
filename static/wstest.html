@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script>
+    var ws = new WebSocket("ws://192.168.197.152:5001/api/test");
+
+    //ws.onopen = function() {ws.send("Hello, world");};
+    setInterval(ws.onopen = function() {ws.send("Hello, world");} ,1000)
+    ws.onmessage = function (event) {
+        console.log(event.data);
+    };
+  </script>
+</head>
+</html>

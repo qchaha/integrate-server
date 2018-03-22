@@ -24,12 +24,11 @@
     </head>
 
     <body>
-
         <!-- Display -->
         <div id="display"></div>
 
         <!-- Guacamole JavaScript API -->
-        <!--<script type="text/javascript" src="dist/js/guacamole/ArrayBufferReader.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/ArrayBufferReader.js"></script>
         <script type="text/javascript" src="dist/js/guacamole/ArrayBufferWriter.js"></script>
         <script type="text/javascript" src="dist/js/guacamole/AudioContextFactory.js"></script>
         <script type="text/javascript" src="dist/js/guacamole/AudioPlayer.js"></script>
@@ -57,23 +56,37 @@
         <script type="text/javascript" src="dist/js/guacamole/StringReader.js"></script>
         <script type="text/javascript" src="dist/js/guacamole/StringWriter.js"></script>
         <script type="text/javascript" src="dist/js/guacamole/Tunnel.js"></script>
-        <script type="text/javascript" src="dist/js/guacamole/Version.js"></script>-->
-        <script type="text/javascript" src="dist/js/guacamole/all.min.js"></script>
+        <script type="text/javascript" src="dist/js/guacamole/Version.js"></script>
+        <!--<script type="text/javascript" src="dist/js/guacamole/all.min.js"></script>-->
+        <!--<script type="text/javascript" src="dist/js/socketio.js"></script>-->
+        <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
 
         <!-- Init -->
         <script type="text/javascript"> /* <![CDATA[ */
+/*
+            console.log("start")
+                var socket = new WebSocket('ws://192.168.197.152:5001/api/guac_tunnel_v1.0','guacamole');
+                socket.onopen = function(){
+                    socket.send("i am client");
+                }
+                socket.onmessage = function(msg){
+                    console.log(msg.data)
+                };
 
+            console.log("end")
+*/
             // Get display div from document
             var display = document.getElementById("display");
 
             // Instantiate client, using an HTTP tunnel for communications.
             var guac = new Guacamole.Client(
-                new Guacamole.HTTPTunnel("/api/guac_tunnel_v1.0")
+                //new Guacamole.HTTPTunnel("/api/guac_tunnel_v1.0")
+                new Guacamole.WebSocketTunnel("/api/guac_tunnel_v1.0")
             );
 
             // Add client to display div
             display.appendChild(guac.getDisplay().getElement());
-            
+   
             // Error handler
             guac.onerror = function(error) {
                 alert(error);
@@ -81,7 +94,7 @@
 
             // Connect
             guac.connect();
-
+          
             // Disconnect on close
             window.onunload = function() {
                 guac.disconnect();
@@ -94,7 +107,7 @@
             mouse.onmouseup   =
             mouse.onmousemove = function(mouseState) {
                 guac.sendMouseState(mouseState);
-                console.log(mouseState)
+                //console.log(mouseState)
             };
 
             // Keyboard
@@ -107,6 +120,7 @@
             keyboard.onkeyup = function (keysym) {
                 guac.sendKeyEvent(0, keysym);
             };
+
 
         /* ]]> */ </script>
 
