@@ -1,4 +1,4 @@
-#!flask/bin/python3
+#!../flask/bin/python3
 from flask import json
 from kafka import KafkaConsumer
 from pymongo import MongoClient

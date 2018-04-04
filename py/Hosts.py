@@ -9,11 +9,11 @@ import subprocess
 import time
 
 
-class Monitor:
+class Hosts:
 
     #静态变量，保存hostname和ip的对应信息在程序内存中
     host_table_inmem = []
-    #静态变量，保存jwt,类内访问时需要Monitor.jwt_token
+    #静态变量，保存jwt,类内访问时需要Hosts.jwt_token
     jwt_visit_token = ""
 
     """初始化对象私有变量"""
@@ -22,11 +22,11 @@ class Monitor:
         self.mysql_user = "root"
         self.mysql_pwd = "root123"
         self.mysql_db_name = "test"
-        self.sql_fetch_all_ip = "select ip_address from t_host order by ip_address"
-        self.sql_fetch_all_host = "select * from t_host order by ip_address"
+        self.sql_fetch_all_ip = "select ip_address from host order by ip_address"
+        self.sql_fetch_all_host = "select * from host order by ip_address"
         self.mongo_srvip = "192.168.197.152"
         self.mongo_port = 27017
-        self.mongo_db_name = "test"
+        self.mongo_db_name = "integrate"
         self.jwt_secret_key = "verify_complex"
         self.jwt_salt_key = "auth_salt_verylong"
         self.jwt_visit_expire_time = 3600
@@ -101,8 +101,8 @@ class Monitor:
                 dresults['is_http'] = result[17]
                 dresults['http_port'] = result[18]
                 jresults.append(dresults)
-                Monitor.host_table_inmem.append([result[1],result[2]])
-                #print(Monitor.host_table_inmem)
+                Hosts.host_table_inmem.append([result[1],result[2]])
+                #print(Hosts.host_table_inmem)
             db.close()
         except:
             print("error fetch in host_data from mysql!")
@@ -120,7 +120,7 @@ class Monitor:
             #print(ip)
             ips = "\'" + ip + "\'," + ips
         ips = ips[:-1]
-        sql = "delete from t_host where ip_address in(" + ips + ")"
+        sql = "delete from host where ip_address in(" + ips + ")"
         try:
             cursor.execute(sql)
             db.commit()
@@ -140,7 +140,13 @@ class Monitor:
         cursor = db.cursor()
         hostname = "default"
         #print(request.json['add_host_ip'],request.json['add_host_admin_user'],request.json['add_host_admin_password'],request.json['add_host_os'])
-        sql = "insert into t_host values(null,'" + request.json['add_host_ip'] + "','" + hostname + "','" + request.json['add_host_admin_user'] + "','" + request.json['add_host_admin_password'] + "','" + request.json['add_host_os'] + "','Mysql')"
+        sql = "insert into host values(null,'" \
+              + request.json['add_host_ip'] + "','" \
+              + hostname + "','" \
+              + request.json['add_host_admin_user'] + "','" \
+              + request.json['add_host_admin_password'] + "'," \
+              + "'Linux','" + request.json['add_host_os'] + "',"\
+              + "1,22,0,null,0,null,0,null,1,22,0,null)"
         #print(sql)
         try:
             cursor.execute(sql)
@@ -153,10 +159,10 @@ class Monitor:
         return op_result
 
     """获取选中主机的实时信息，信息从队列中取"""
-    def get_host_info( self, hostname ):
+    def gehost_info( self, hostname ):
         #检查主机是否存活
         ip = ""
-        for i in Monitor.host_table_inmem:
+        for i in Hosts.host_table_inmem:
             if i[0] == hostname:
                 ip = i[1]
                 break
@@ -164,7 +170,7 @@ class Monitor:
         #print(isalive)
 
         array = []
-        #print(Monitor.host_table_inmem)
+        #print(Hosts.host_table_inmem)
         if isalive == "offline":
             abort(404)
         else:
@@ -218,17 +224,17 @@ class Monitor:
         """
         s = Serializer( secret_key = self.jwt_secret_key, salt = self.jwt_salt_key, expires_in = self.jwt_visit_expire_time )
         timestamp = time.time()
-        Monitor.jwt_visit_token = s.dumps( { "admin_user" : "admin" , "admin_password" : "admin123", "iat": timestamp } ).decode("utf-8")            
-        rt_token = Monitor.jwt_visit_token
+        Hosts.jwt_visit_token = s.dumps( { "admin_user" : "admin" , "admin_password" : "admin123", "iat": timestamp } ).decode("utf-8")            
+        rt_token = Hosts.jwt_visit_token
         return rt_token
 
     """JWT 校验token"""
     def verify_token( self ):
         s = Serializer( secret_key = self.jwt_secret_key, salt = self.jwt_salt_key )
         #print(request.json['token'])
-        #print(Monitor.jwt_token)
+        #print(Hosts.jwt_token)
         try:
-            data = s.loads(Monitor.jwt_token)
+            data = s.loads(Hosts.jwt_token)
         #token expired
         except SignatureExpired:
             return "token expired!"
@@ -244,7 +250,7 @@ class Monitor:
         db = pymysql.connect( self.mysql_srvip, self.mysql_user, self.mysql_pwd, self.mysql_db_name )
         cursor = db.cursor()
         try:
-            cursor.execute("select admin_user, admin_password from t_host where admin_user = 'root' and ip_address='192.168.197.152'")
+            cursor.execute("select admin_user, admin_password from host where admin_user = 'root' and ip_address='192.168.197.152'")
             results = cursor.fetchall()
             for result in results:
                 admin_user = result[0]
@@ -255,12 +261,12 @@ class Monitor:
             abort(404)
 
         if r_encrypt_password == encrypt_password and admin_user == r_admin_user:
-            Monitor.jwt_visit_token = self.generate_token()
+            Hosts.jwt_visit_token = self.generate_token()
             rt_msg = 1
         else:
-            Monitor.jwt_visit_token = "login auth failure!"
+            Hosts.jwt_visit_token = "login auth failure!"
             rt_msg = -1
-        #print("visit_token: " + Monitor.jwt_visit_token)
+        #print("visit_token: " + Hosts.jwt_visit_token)
         return rt_msg
 
     """打开web tty"""

@@ -27,17 +27,27 @@
 
   <!-- Google Font -->
   <link rel="stylesheet" href="dist/css/google-font.css">
+
+  <style>
+    .fade-enter-active, .fade-leave-active{
+      transition: all 0.5s ease
+    }
+
+    [v-cloak] {
+      display: none;
+    }
+  </style>
 </head>
 
 <body class="hold-transition login-page">
-  <div class="login-box">
+  <div class="login-box fade-enter-active fade-leave-active" id="vueapp" v-bind:style="{opacity: loading_status}" v-cloak>
     <div class="login-logo">
       <a href="#">
         <b>欢迎</b>
       </a>
     </div>
     <!-- /.login-logo -->
-    <div class="login-box-body" id="vueapp">
+    <div class="login-box-body">
       <p class="login-box-msg">登录管理员账号开始进行管理</p>
       <div class="form-group has-feedback">
         <input type="user" class="form-control" placeholder="Username" v-model="admin_user">
@@ -82,20 +92,16 @@
   <script src="dist/js/vue.js"></script>
   <script src="dist/js/jquery.md5.js"></script>
   <script>
-    $(function () {
-      $('input').iCheck({
-        checkboxClass: 'icheckbox_square-blue',
-        radioClass: 'iradio_square-blue',
-        increaseArea: '20%' // optional
-      });
-    });
-
-
     var vue = new Vue({
       el: '#vueapp',
       data: {
         admin_user: '',
-        admin_password: ''
+        admin_password: '',
+        loading_status: 0       //过渡效果
+      },
+      mounted: function(){
+        var self = this;
+        setTimeout(function(){self.loading_status = 1},500);
       },
       methods:{
         login: function(){
@@ -123,6 +129,14 @@
           })
         }
       },
+    });
+
+    $(function () {
+      $('input').iCheck({
+        checkboxClass: 'icheckbox_square-blue',
+        radioClass: 'iradio_square-blue',
+        increaseArea: '20%' // optional
+      });
     });
 
   </script>

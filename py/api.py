@@ -1,46 +1,47 @@
-#!flask/bin/python
+#!../flask/bin/python
 from flask import Flask, jsonify, make_response, request, abort, render_template, json
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
 import requests
-from py.Monitor import Monitor
+from Hosts import Hosts
+from ScriptManager import Scripts
 
 # 静态文件的放置路径，可根据实际情况设置，这里设置为默认路径：'./static/'
-app = Flask(__name__, static_url_path='')
+app = Flask(__name__,static_url_path='', root_path='/root/py/integrate-server/')
 
 
 @app.route('/api/get_gateone_auth',methods=['GET'])
 def get_gateone_auth():
-    valid_json_auth_object = Monitor.get_gateone_auth()
+    valid_json_auth_object = Hosts.get_gateone_auth()
     return valid_json_auth_object
 
 @app.route('/api/check_host_alive_v1.0',methods=['GET'])
 def check_host_alive():
-    ins = Monitor()
+    ins = Hosts()
     jresults = ins.check_host_alive()
     return jsonify({'host_alive_info': jresults})
 
 @app.route('/api/find_all_host_v1.0',methods=['GET'])
 def find_all_host():
-    ins = Monitor()
+    ins = Hosts()
     jresults = ins.find_all_host()
     return jsonify({'host_info': jresults})
 
 @app.route('/api/delete_hosts_v1.0', methods=['POST'])
 def delete_hosts():
-    ins = Monitor()
+    ins = Hosts()
     op_result = ins.delete_hosts()
     return  jsonify({"op_result": op_result})
 
 @app.route('/api/add_hosts_v1.0', methods=['POST'])
 def add_hosts():
-    ins = Monitor()
+    ins = Hosts()
     op_result = ins.add_hosts()
     return jsonify({"op_result": op_result})
 
 @app.route('/kafka/get_host_info_v1.1/<string:hostname>', methods=['GET'])
 def get_host_info(hostname):
-    ins = Monitor()
+    ins = Hosts()
     array = ins.get_host_info(hostname)
     return jsonify({'host_data': array})
 
@@ -57,10 +58,10 @@ def not_found(error):
 #登录认证
 @app.route('/api/login_auth_v1.0', methods=['POST'])
 def login_auth():
-    ins = Monitor()
+    ins = Hosts()
     rt_msg = ins.login_auth( request.json['username'], request.json['encrypt_password'] )
     if rt_msg == 1:
-        rt_token = Monitor.jwt_visit_token
+        rt_token = Hosts.jwt_visit_token
     elif rt_msg == -1:
         rt_token = "invalid token!"
     return jsonify({ "rt_token": rt_token })
@@ -68,10 +69,10 @@ def login_auth():
 #访问页面前认证
 @app.route('/api/isauth_v1.0' , methods = ['POST'])
 def test():
-    if request.json['visit_token'] == Monitor.jwt_visit_token:
+    if request.json['visit_token'] == Hosts.jwt_visit_token:
         s = Serializer( secret_key = "verify_complex", salt = "auth_salt_verylong" )
         try:
-            data = s.loads(Monitor.jwt_visit_token)
+            data = s.loads(Hosts.jwt_visit_token)
             rt_msg = "auth ok!"
         #token expired
         except SignatureExpired:
@@ -82,13 +83,13 @@ def test():
         except:
             rt_msg = "token require error!"
     else:
-        rt_msg = "no because visit is :" + Monitor.jwt_visit_token
+        rt_msg = "no because visit is :" + Hosts.jwt_visit_token
     return jsonify({ "rt_msg": rt_msg })
 
 
 @app.route('/api/open_wetty_v1.0', methods = ['POST'])
 def open_wetty():
-    ins = Monitor()
+    ins = Hosts()
     re = ins.open_wetty()
     return jsonify({"can_open_wetty": re})
 
@@ -110,6 +111,53 @@ def show_remote_desktop():
     payload = {'protocol': protocol, 'ip': ip, 'user': user, 'password': password, 'port': port}
     r = requests.post("http://192.168.197.152:5001/api/guac_interface_v1.0", data = payload)
     return "dd"
+
+
+@app.route('/api/fetch_all_scripts_v1.0', methods = ['GET'])
+def fetch_all_scripts():
+    ins = Scripts()
+    re = ins.fetch_all_script_info()
+    return jsonify({"script": re})
+
+@app.route('/api/fetch_script_content_v1.0', methods = ['POST'])
+def fetch_script_content():
+    script_name = request.json["script_name"]
+    ins = Scripts()
+    re = ins.fetch_script_content(script_name)
+    return jsonify({"script_content": re})
+
+@app.route('/api/new_or_import_script_v1.0', methods = ['POST'])
+def import_script():
+    script_content = request.json['script_content']
+    script_name = request.json['script_name']
+    script_tags = request.json['script_tags']
+    script_descript = request.json['script_description']
+    ins = Scripts()
+    re = ins.import_script( script_content, script_name, script_tags, script_descript )
+    return jsonify({"import_script": re})
+
+@app.route('/api/delete_script_v1.0', methods = ['POST'])
+def delete_script():
+    select_script_names = request.json['select_script_names']
+    ins = Scripts()
+    re = ins.delete_script( select_script_names )
+    return jsonify({"delete_script_result": re})
+
+#处理select2的脚本标签
+@app.route('/api/fetch_all_script_tags_v1.0', methods = ['GET'])
+def fetch_all_script_tags():
+    ins = Scripts()
+    re = ins.fetch_all_script_tags()
+    return jsonify({"script_tags": re})
+
+#查看新建、导入的脚本名是否已经存在
+@app.route('/api/shell_syntax_check_v1.0', methods = ['POST'])
+def shell_syntax_check():
+    script_content = request.json['script_content']
+    ins = Scripts()
+    re = ins.shell_syntax_check(script_content)
+    return jsonify({"shell_check_result": re})
+
 
 
 

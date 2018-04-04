@@ -46,15 +46,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
       padding-right: 20px;
     }
 
-    .fade-enter-active {
-      transition: opacity 0.5s;
-      opacity: 0;
+    .fade-enter-active, .fade-leave-active{
+      transition: all 0.5s ease
     }
 
-    .fade-leave-active {
-      transition: opacity 1s;
-      opacity: 0;
-    }
     .table-height {
       height: 480px;
     }
@@ -132,7 +127,6 @@ desired effect
 
 <body class="hold-transition skin-purple sidebar-mini">
 
-
   <div class="wrapper">
     <!----------------------
     Main Header
@@ -148,7 +142,7 @@ desired effect
     Content Wrapper. Contains page content
     -------------------------------------------->
 
-    <div class="content-wrapper" id="vueapp" v-cloak>
+    <div class="content-wrapper fade-enter-active fade-leave-active" id="vueapp" v-bind:style="{opacity: loading_status}" style="height:900px" v-cloak>
       <!-- Content Header (Page header) -->
       <section class="content-header">
         <h1>主机
@@ -156,23 +150,22 @@ desired effect
         </h1>
       </section>
       <!--/. content-header-->
-
       <section class="content container-fluid">
         <!--hosts list-->
-        <div class="col-md-8">
-          <div class="box box-info" style="height:659px">
+        <div class="col-md-12">
+          <div class="box box-info" style="height:830px">
             <div class="box-header with-border">
               <h3 class="box-title">主机列表</h3>
             </div>
             <div class="mailbox-controls">
-              <div class="btn-group" style="margin: -20px 10px -90px 5px">
+              <div class="btn-group" style="margin: -20px 20px -90px 5px">
                 <button type="button" class="btn btn-default bg-purple" data-toggle="modal" data-target="#modal-addhost"><i class="fa fa-plus"></i> 添加</button>
               </div>
-              <div class="btn-group" style="margin: -20px 10px -90px 10px">
+              <div class="btn-group" style="margin: -20px 20px -90px 10px">
                 <button type="button" class="btn btn-default bg-red" data-toggle="modal" data-target="#modal-deletehost" v-if="delok"><i class="fa fa-minus"></i> 删除</button>
                 <button type="button" class="btn btn-default bg-red disabled" v-if="!delok"><i class="fa fa-minus"></i> 删除</button>
               </div>
-              <div class="btn-group" style="margin: -20px 10px -90px 10px">
+              <div class="btn-group" style="margin: -20px 20px -90px 10px">
                 <button type="button" class="btn btn-default bg-gary" v-on:click="open_multiselect()"><i class="fa fa-tasks"></i> {{ ismulti }}</button>
                 <button type="button" class="btn btn-default dropdown-toggle bg-gary" data-toggle="dropdown" aria-expanded="false" v-if="checkbox_show">
                   <span class="caret"></span>
@@ -188,7 +181,7 @@ desired effect
             <!-- /.box-header -->
             <div class="box-body">
               <div class="table-responsive mailbox-messages">
-                <table class="table table-hover" id="vuetable" v-if="!isinit">
+                <table class="table table-hover" id="vuetable">
                   <thead>
                       <tr>
                         <th style="width: 10%">序号</th>
@@ -196,7 +189,7 @@ desired effect
                         <th style="width: 15%">主机名</th>
                         <th style="width: 10%">状态</th>
                         <th style="width: 10%">OS</th>
-                        <th style="width: 30%">更多操作</th>
+                        <th style="width: 30%">操作</th>
                       </tr>
                   </thead>
                   <tbody style="font-weight:normal">
@@ -214,12 +207,12 @@ desired effect
                       </td>
                       <td><i class="fa fa-windows datatable-icon" v-if="host.os_type == 'Windows'"></i><i class="fa fa-linux datatable-icon" v-if="host.os_type == 'Linux'"></i></td>
                       <td>
-                        <i style="padding: 0 15px 0 5px" class="fa fa-terminal datatable-icon" v-on:click="open_wetty(host.ip_address)"></i>
-                        <i style="padding: 0 15px 0 5px" class="fa fa-television datatable-icon" v-on:click="remote_desktop(host.ip_address,'rdp')"></i>
-                        <i style="padding: 0 15px 0 5px" class="fa fa-vimeo datatable-icon" v-on:click="remote_desktop(host.ip_address,'vnc')"></i>
-                        <i style="padding: 0 15px 0 5px" class="fa fa-folder-open datatable-icon"></i>
-                        <i style="padding: 0 15px 0 5px" class="fa fa-folder-open-o datatable-icon"></i>
-                        <i style="padding: 0 15px 0 5px" class="fa fa-internet-explorer datatable-icon"></i>
+                        <i style="padding: 0 15px 0 5px" class="fa fa-terminal datatable-icon" v-on:click="open_wetty(host.ip_address)" v-if="host.is_ssh"></i>
+                        <i style="padding: 0 15px 0 5px" class="fa fa-television datatable-icon" v-on:click="remote_desktop(host.ip_address,'rdp')" v-if="host.is_rdp"></i>
+                        <i style="padding: 0 15px 0 5px" class="fa fa-vimeo datatable-icon" v-on:click="remote_desktop(host.ip_address,'vnc')" v-if="host.is_vnc" ></i>
+                        <i style="padding: 0 15px 0 5px" class="fa fa-folder-open datatable-icon" v-if="host.is_ftp"></i>
+                        <i style="padding: 0 15px 0 5px" class="fa fa-folder-open-o datatable-icon" v-if="host.is_scp"></i>
+                        <i style="padding: 0 15px 0 5px" class="fa fa-internet-explorer datatable-icon" v-if="host.is_http"></i>
                       </td>
                    </tr>
                   </tbody>
@@ -232,11 +225,6 @@ desired effect
           </div>
         </div>
         <!--./hosts list-->
-
-        <div class="col-md-4">
-            <div class="box box-info" style="height:659px">
-            </div>
-        </div>
        </section>
       <!--./content container-fluid-->
   </div>
@@ -344,12 +332,6 @@ desired effect
 
   <!-- Page script -->
 
-  <!--echarts v3.2.8-->
-  <script src="dist/js/echarts.js"></script>
-  <!--theme for echarts-->
-  <script src="dist/js/themes/shine.js"></script>
-  <!--theme for echarts-->
-  <script src="dist/js/themes/macarons.js"></script>
   <!-- jQuery 3 -->
   <script src="bower_components/jquery/dist/jquery.min.js"></script>
   <!-- Bootstrap 3.3.7 -->
@@ -358,10 +340,6 @@ desired effect
   <script src="bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
   <!-- DataTables -->
   <script src="bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-  <!-- vuetable2 -->
-  <script src="dist/js/vuetable-2-full.js"></script>
-  <!-- ip input mask-->
-  <script src="dist/js/vue-the-mask.js"></script>
   <!-- AdminLTE App slide navigator-->
   <script src="dist/js/adminlte.min.js"></script>
 
@@ -416,7 +394,7 @@ desired effect
         online: [],                  //与host_alive_info对应，控制表格样式，true显示“在线”
         offline: [],                 //与host_alive_info对应，控制表格样式，true显示“离线”
         loading: [],                 //与host_alive_info对应，控制表格样式，true显示“loading动画”
-        loading_status: 0.2,         //echarts在loading时，进行模糊处理
+        loading_status: 0,           //页面初始化时进行模糊处理，效果像过渡
         loading_page: '',            //''为显示在echarts上的loading页面
         show: '',                    //''为显示echarts
         code404: 'none',             //''为显示echarts上的404错误页面，默认'none'不显示
@@ -425,13 +403,14 @@ desired effect
         checkbox_show: false,        //不点多选按钮前，不显示多选按钮，点击作为切换
         single_select_content: 0,    //记录点击多选前的状态，当返回单选状态时，切换回之前单选的状态
         ismulti: '多选',             //多选和单选按钮的标题
-        isinit:  true,               //是否第一次运行，控制jquery table只在第一次运行时创建，其他刷新状态不再创建
+        isinit:  false,               //是否第一次运行，控制jquery table只在第一次运行时创建，其他刷新状态不再创建
         delok: false,                //控制开关，控制是否能点击删除
         add_host_ip: '',
       },
       mounted: function() {
         var self = this;
         self.find_all_host();   
+        setTimeout(function(){self.loading_status = 1 },400)
       },
       methods: {
         remote_desktop: function(ip, protocol){
@@ -492,11 +471,9 @@ desired effect
               self.check_host_alive();
               $(function() {
                 $('#vuetable').DataTable({
-                  "dom": "<'row'<'col-sm-6'><'col-sm-6'<'datatable-search-position'f>>>" +
-                  "<'row'<'col-sm-12'<'table-height'tr>>>" +
-                  "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                  "dom": "ftrip",
                   "destroy": false,
-                  "pageLength": 9,
+                  "pageLength": 13,
                   "columns": [
                     null,
                     null,
@@ -507,7 +484,7 @@ desired effect
                   ]
                 })
               });
-              self.isinit = false;
+              //self.isinit = false;
             })
             .catch(function(error) {
               console.log(error)
@@ -546,11 +523,9 @@ desired effect
               //当查询状态是否在线后，需要删除原先的表格，重新进行创建
               $(function() {
                 $('#vuetable').DataTable({
-                  "dom": "<'row'<'col-sm-6'><'col-sm-6'<'datatable-search-position'f>>>" +
-                  "<'row'<'col-sm-12'<'table-height'tr>>>" +
-                  "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                  "dom": "ftrip",
                   "destroy": true,
-                  "pageLength": 9,
+                  "pageLength": 13,
                   "columns": [
                     null,
                     null,

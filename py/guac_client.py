@@ -1,4 +1,4 @@
-#!flask/bin/python
+#!../flask/bin/python
 from flask import Flask,request,Response,abort,make_response,jsonify
 from guacamole.client import GuacamoleClient 
 import threading
@@ -10,7 +10,7 @@ from gevent import monkey
 monkey.patch_all()
 from time import ctime,sleep
 
-app = Flask(__name__ , static_url_path = "")
+app = Flask(__name__,static_url_path='', root_path='/root/py/integrate-server/')
 #app.config['SECRET_KEY'] = 'secret!'
 
 
@@ -120,7 +120,7 @@ def not_found(error):
 if __name__ == '__main__':
     #app.run(host='192.168.197.152',port=5001,debug=True,threaded=True)
     #socketio.run(app, host='192.168.197.152', port=5001, debug=True)
-    app.debug = True
     #app.threaded = True
+    app.debug = True
     http_server =WSGIServer(('192.168.197.152' , 5001), app, handler_class=WebSocketHandler)
     http_server.serve_forever()
