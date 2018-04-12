@@ -1,7 +1,5 @@
 #!../flask/bin/python
 from flask import request, abort, json
-from itsdangerous import (TimedJSONWebSignatureSerializer
-                          as Serializer, BadSignature, SignatureExpired)
 from pymongo import MongoClient
 import pymysql
 import datetime
@@ -13,23 +11,18 @@ class Hosts:
 
     #静态变量，保存hostname和ip的对应信息在程序内存中
     host_table_inmem = []
-    #静态变量，保存jwt,类内访问时需要Hosts.jwt_token
-    jwt_visit_token = ""
 
     """初始化对象私有变量"""
     def __init__(self):
         self.mysql_srvip = "192.168.197.152"
         self.mysql_user = "root"
         self.mysql_pwd = "root123"
-        self.mysql_db_name = "test"
+        self.mysql_db_name = "integrate"
         self.sql_fetch_all_ip = "select ip_address from host order by ip_address"
         self.sql_fetch_all_host = "select * from host order by ip_address"
         self.mongo_srvip = "192.168.197.152"
         self.mongo_port = 27017
         self.mongo_db_name = "integrate"
-        self.jwt_secret_key = "verify_complex"
-        self.jwt_salt_key = "auth_salt_verylong"
-        self.jwt_visit_expire_time = 3600
         self.wetty_config_file = "/root/wetty/tossh.sh"
 
     """获得gateone api认证"""
@@ -147,7 +140,7 @@ class Hosts:
               + request.json['add_host_admin_password'] + "'," \
               + "'Linux','" + request.json['add_host_os'] + "',"\
               + "1,22,0,null,0,null,0,null,1,22,0,null)"
-        #print(sql)
+        print(sql)
         try:
             cursor.execute(sql)
             db.commit()
@@ -212,62 +205,6 @@ class Hosts:
               #print("%s | offline" % result[0])
               re = "offline"
         return re
-
-    """JWT 生成token"""
-    def generate_token( self ):
-        """
-        JWT（json web token）一共包含三个内容：
-        1.头部；
-        2.payload(s.dumps()的内容)；
-        3.签名（secret_key,salt_key）
-        Serializer()函数自动生成头部和签名，只需要payload写进入
-        """
-        s = Serializer( secret_key = self.jwt_secret_key, salt = self.jwt_salt_key, expires_in = self.jwt_visit_expire_time )
-        timestamp = time.time()
-        Hosts.jwt_visit_token = s.dumps( { "admin_user" : "admin" , "admin_password" : "admin123", "iat": timestamp } ).decode("utf-8")            
-        rt_token = Hosts.jwt_visit_token
-        return rt_token
-
-    """JWT 校验token"""
-    def verify_token( self ):
-        s = Serializer( secret_key = self.jwt_secret_key, salt = self.jwt_salt_key )
-        #print(request.json['token'])
-        #print(Hosts.jwt_token)
-        try:
-            data = s.loads(Hosts.jwt_token)
-        #token expired
-        except SignatureExpired:
-            return "token expired!"
-        #invalid token
-        except BadSignature:
-            return "invalid token! signature may be modified!"
-        except:
-            return "token require error!"
-        return data
-
-    """认证身份，返回1则代表成功，进行跳转；返回-1则表示失败，重新输入"""
-    def login_auth( self, r_admin_user, r_encrypt_password ):
-        db = pymysql.connect( self.mysql_srvip, self.mysql_user, self.mysql_pwd, self.mysql_db_name )
-        cursor = db.cursor()
-        try:
-            cursor.execute("select admin_user, admin_password from host where admin_user = 'root' and ip_address='192.168.197.152'")
-            results = cursor.fetchall()
-            for result in results:
-                admin_user = result[0]
-                encrypt_password = result[1]
-            db.close()
-        except:
-            print("error fetch in admin password from mysql!")
-            abort(404)
-
-        if r_encrypt_password == encrypt_password and admin_user == r_admin_user:
-            Hosts.jwt_visit_token = self.generate_token()
-            rt_msg = 1
-        else:
-            Hosts.jwt_visit_token = "login auth failure!"
-            rt_msg = -1
-        #print("visit_token: " + Hosts.jwt_visit_token)
-        return rt_msg
 
     """打开web tty"""
     def open_wetty( self ):

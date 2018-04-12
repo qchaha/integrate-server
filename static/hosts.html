@@ -20,8 +20,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
   <!-- DataTables -->
   <link rel="stylesheet" href="bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
-  <!-- vuetable2 -->
-  <link rel="stylesheet" href="dist/css/vuetable-2.css">
+
 
 
 
@@ -86,7 +85,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       })
         .then(function (response) {
           if (response.data.rt_msg == "auth ok!") {
-            console.log("auth ok!")
+            //console.log("auth ok!")
           }
           else {
             location.href = 'login.html'
@@ -133,10 +132,104 @@ desired effect
     ------------------------>
     <script src="dist/module-js/main-header.js"></script>
 
-    <!------------------------------------------
+        <!------------------------------------------
     Left side column. contains the logo and sidebar
+            <script src="dist/module-js/main-sidebar.js"></script>
     -------------------------------------------->
-    <script src="dist/module-js/main-sidebar.js"></script>
+
+    <aside class='main-sidebar'>
+        <!-- sidebar: style can be found in sidebar.less -->
+        <section class='sidebar'>
+            <!-- Sidebar Menu -->
+            <ul class='sidebar-menu' data-widget='tree'>
+                <li class='header'>主导航</li>
+                <!-- Optionally, you can add icons to the links -->
+                <li>
+                    <a href='system-summary.html'>
+                        <i class='fa fa-dashboard'></i>
+                        <span>系统总体情况</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href='hosts.html'>
+                        <i class='fa fa-desktop'></i>
+                        <span>主机</span>
+                    </a>
+                </li>
+                <li class='treeview'>
+                    <a href='#'>
+                        <i class='fa fa-database'></i>
+                        <span>数据库</span>
+                        <span class='pull-right-container'>
+                            <i class='fa fa-angle-left pull-right'></i>
+                        </span>
+                    </a>
+                    <ul class='treeview-menu'>
+                        <li>
+                            <a href='#'>
+                                <i class='fa fa-th' style='margin: 0 10px 0 0'></i>数据库管理</a>
+                        </li>
+                        <li>
+                            <a href='#'>
+                                <i class='fa fa-copy' style='margin: 0 10px 0 0'></i>数据库备份管理</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href='#'>
+                        <i class='fa fa-cubes'></i>
+                        <span>虚拟化</span>
+                    </a>
+                </li>
+                <li>
+                    <a href='#'>
+                        <i class='icon ion-android-phone-landscape' style='margin: 0 10px 0 0'></i>
+                        <span>云终端</span>
+                    </a>
+                </li>
+                <li class='treeview'>
+                    <a href='#'>
+                        <i class='fa fa-wrench'></i>
+                        <span>自动化管理</span>
+                        <span class='pull-right-container'>
+                            <i class='fa fa-angle-left pull-right'></i>
+                        </span>
+                    </a>
+                    <ul class='treeview-menu'>
+                        <li>
+                            <a href='scriptmanage.html'>
+                                <i class='fa fa-file-code-o' style='margin: 0 10px 0 0'></i>脚本管理</a>
+                        </li>
+                        <li>
+                            <a href='processesmanage.html'>
+                                <i class='fa fa-object-group' style='margin: 0 10px 0 0'></i>流程管理</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class='treeview'>
+                    <a href='#'>
+                        <i class='fa fa-gears' style='margin: 0 4px 0 0'></i>
+                        <span>设置</span>
+                        <span class='pull-right-container'>
+                            <i class='fa fa-angle-left pull-right'></i>
+                        </span>
+                    </a>
+                    <ul class='treeview-menu'>
+                        <li>
+                            <a href='#'>
+                                <i class='fa fa-user' style='margin: 0 10px 0 0'></i>用户管理</a>
+                        </li>
+                        <li>
+                            <a href='#'>
+                                <i class='fa fa-cog' style='margin: 0 10px 0 0'></i>系统设置</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <!-- /.sidebar-menu -->
+        </section>
+        <!-- /.sidebar -->
+    </aside>
 
     <!------------------------------------------
     Content Wrapper. Contains page content
@@ -363,12 +456,15 @@ desired effect
       },
       methods: {
           add_host: function(){
+            jwt = localStorage.getItem('jwt')
+
             var self = this;
             axios.post('/api/add_hosts_v1.0', {
               add_host_ip: self.add_host_ip,
               add_host_admin_user: self.add_host_admin_user,
               add_host_admin_password: self.add_host_admin_password,
-              add_host_os: self.add_host_os
+              add_host_os: self.add_host_os,
+              visit_token: jwt
             })
             .then(function(response){
                 if(response.data.op_result == "add sucessful!")
@@ -414,9 +510,12 @@ desired effect
       },
       methods: {
         remote_desktop: function(ip, protocol){
+          jwt = localStorage.getItem('jwt')
+
           axios.post("/api/remote_desktop_v1.0",{
             ip : ip,
             protocol : protocol,
+            visit_token: jwt
           })
           .then(function(response){
             window.open("http://192.168.197.152:5001/guacd_client.html")
@@ -426,8 +525,11 @@ desired effect
           })
         },
         open_wetty: function(ip){
+          jwt = localStorage.getItem('jwt')
+
           axios.post('/api/open_wetty_v1.0',{
             ip : ip,
+            visit_token: jwt
           })
           .then(function(response){
             //console.log(response.data.can_open_wetty)
@@ -445,9 +547,13 @@ desired effect
           });
         },
         find_all_host: function(){
+          jwt = localStorage.getItem('jwt')
+
           var self = this;
           //从mysql中获取所有主机信息
-          axios.get('/api/find_all_host_v1.0')
+          axios.post('/api/find_all_host_v1.0',{
+            visit_token: jwt
+          })
             .then(function(response) {
               //重置状态
               self.delok = false;
@@ -499,6 +605,8 @@ desired effect
           self.loading_complete();
         },
         check_host_alive: function() {
+          jwt = localStorage.getItem('jwt')
+
           //得到所有主机信息后，检查所有主机的是否在线的状态
           var self = this;
           for (var i = 1; i <= self.host_alive_info.length; i++) {
@@ -506,7 +614,9 @@ desired effect
             Vue.set(self.offline, i, false);
             Vue.set(self.loading, i, true);
           }
-          axios.get('/api/check_host_alive_v1.0')
+          axios.post('/api/check_host_alive_v1.0', {
+            visit_token: jwt
+          })
             .then(function(response) {
               self.host_alive_info = response.data.host_alive_info;
               for (var i = 0; i < self.host_alive_info.length; i++) {
@@ -626,6 +736,8 @@ desired effect
           }
         },
         delete_host: function(){
+          jwt = localStorage.getItem('jwt')
+
           var self = this;
           var selected_ips = [];
           for( var i = 0; i < self.host_info.length + 1; i++ )
@@ -637,7 +749,10 @@ desired effect
                 selected_ips.push(self.host_info[self.selected_rows[j] - 1].ip_address);
             }
           }
-          axios.post('/api/delete_hosts_v1.0', {selected_ips: selected_ips})
+          axios.post('/api/delete_hosts_v1.0', {
+                selected_ips: selected_ips,
+                visit_token: jwt
+            })
           .then(function(response){
               if(response.data.op_result == "delete sucessful!")
               {

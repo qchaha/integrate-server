@@ -18,10 +18,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
-    <!-- DataTables -->
-    <link rel="stylesheet" href="bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
-    <!-- vuetable2 -->
-    <link rel="stylesheet" href="dist/css/vuetable-2.css">
     <!-- Select2 -->
     <link rel="stylesheet" href="bower_components/select2/dist/css/select2.min.css">
 
@@ -92,10 +88,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
         .select2-selection--multiple .select2-search--inline .select2-search__field {
             width: auto !important;
         }
-         /*select2的高度，宽度，可用来控制是否换行*/
+
+        /*select2的高度，宽度，可用来控制是否换行*/
+
         .select2-selection__rendered {
-             height: 30px !important;
-             width: 500px !important;
+            height: 30px !important;
+            width: 500px !important;
         }
 
         /* ace background color */
@@ -110,16 +108,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
             padding: 0 0 35px 0
         }
 
-        /* 新建脚本对话框表单行距 */
+        /* 新建、修改脚本对话框表单行距 */
 
-        .form-group-newscript {
+        .form-group-newscript,.form-group-modifyscript {
             padding: 0 0 85px 0
         }
 
         /* ace editor show change line */
 
         .ace-changed {
-	        border-left: #FCAF3E 3px solid;
+            border-left: #FCAF3E 3px solid;
         }
     </style>
 
@@ -133,7 +131,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="dist/js/axios.js"></script>
 
     <script>
-        test = ''
         jwt = localStorage.getItem('jwt')
         var self = this;
         if (jwt) {
@@ -142,7 +139,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             })
                 .then(function (response) {
                     if (response.data.rt_msg == "auth ok!") {
-                        console.log("auth ok!")
+                       // console.log("auth ok!")
                     }
                     else {
                         location.href = 'login.html'
@@ -190,8 +187,102 @@ desired effect
 
         <!------------------------------------------
     Left side column. contains the logo and sidebar
+            <script src="dist/module-js/main-sidebar.js"></script>
     -------------------------------------------->
-        <script src="dist/module-js/main-sidebar.js"></script>
+
+        <aside class='main-sidebar'>
+            <!-- sidebar: style can be found in sidebar.less -->
+            <section class='sidebar'>
+                <!-- Sidebar Menu -->
+                <ul class='sidebar-menu' data-widget='tree'>
+                    <li class='header'>主导航</li>
+                    <!-- Optionally, you can add icons to the links -->
+                    <li>
+                        <a href='system-summary.html'>
+                            <i class='fa fa-dashboard'></i>
+                            <span>系统总体情况</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href='hosts.html'>
+                            <i class='fa fa-desktop'></i>
+                            <span>主机</span>
+                        </a>
+                    </li>
+                    <li class='treeview'>
+                        <a href='#'>
+                            <i class='fa fa-database'></i>
+                            <span>数据库</span>
+                            <span class='pull-right-container'>
+                                <i class='fa fa-angle-left pull-right'></i>
+                            </span>
+                        </a>
+                        <ul class='treeview-menu'>
+                            <li>
+                                <a href='#'>
+                                    <i class='fa fa-th' style='margin: 0 10px 0 0'></i>数据库管理</a>
+                            </li>
+                            <li>
+                                <a href='#'>
+                                    <i class='fa fa-copy' style='margin: 0 10px 0 0'></i>数据库备份管理</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href='#'>
+                            <i class='fa fa-cubes'></i>
+                            <span>虚拟化</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href='#'>
+                            <i class='icon ion-android-phone-landscape' style='margin: 0 10px 0 0'></i>
+                            <span>云终端</span>
+                        </a>
+                    </li>
+                    <li class='treeview active'>
+                        <a href='#'>
+                            <i class='fa fa-wrench'></i>
+                            <span>自动化管理</span>
+                            <span class='pull-right-container'>
+                                <i class='fa fa-angle-left pull-right'></i>
+                            </span>
+                        </a>
+                        <ul class='treeview-menu'>
+                            <li class="active">
+                                <a href='scriptmanage.html'>
+                                    <i class='fa fa-file-code-o' style='margin: 0 10px 0 0'></i>脚本管理</a>
+                            </li>
+                            <li>
+                                <a href='processesmanage.html'>
+                                    <i class='fa fa-object-group' style='margin: 0 10px 0 0'></i>流程管理</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class='treeview'>
+                        <a href='#'>
+                            <i class='fa fa-gears' style='margin: 0 4px 0 0'></i>
+                            <span>设置</span>
+                            <span class='pull-right-container'>
+                                <i class='fa fa-angle-left pull-right'></i>
+                            </span>
+                        </a>
+                        <ul class='treeview-menu'>
+                            <li>
+                                <a href='#'>
+                                    <i class='fa fa-user' style='margin: 0 10px 0 0'></i>用户管理</a>
+                            </li>
+                            <li>
+                                <a href='#'>
+                                    <i class='fa fa-cog' style='margin: 0 10px 0 0'></i>系统设置</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <!-- /.sidebar-menu -->
+            </section>
+            <!-- /.sidebar -->
+        </aside>
 
         <!------------------------------------------
     Content Wrapper. Contains page content
@@ -245,6 +336,7 @@ desired effect
                                 </ul>
                             </div>
                         </div>
+                        <div style="height:660px">
                         <table class="table table-hover" id="tasktable">
                             <thead>
                                 <tr>
@@ -255,22 +347,32 @@ desired effect
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="(script, index) in scripts_info" v-on:click="show_script_content(index, script.name)" v-bind:class="table_selected[index]"
+                                <tr v-for="(script, index) in paging_scripts_info" v-on:click="show_script_content(index + ( current_paging_number - 1 ) * paging_item_count, script.name)" v-bind:class="table_selected[index + ( current_paging_number - 1 ) * paging_item_count]"
                                     style="height: 50px;text-align: center">
                                     <td>
-                                        <input type="checkbox" v-if="ismulti != '多选'" v-bind:value="index" v-model="checkbox_status">
-                                        <label v-if="ismulti == '多选'">{{ index + 1 }}.</label>
+                                        <input type="checkbox" v-if="ismulti != '多选'" v-bind:value="index + ( current_paging_number - 1 ) * paging_item_count" v-model="checkbox_status">
+                                        <label v-if="ismulti == '多选'">{{ index + ( current_paging_number - 1 ) * paging_item_count + 1 }}.</label>
                                     </td>
                                     <td>{{ script.name }}</td>
                                     <td>
                                         <span class="label bg-navy">{{ script.type }}</span>
                                     </td>
                                     <td style="text-align: left">
-                                        <ul class="badge" style="margin: 0 15px 0 0" v-for="(tag,index) in tags[index]" v-bind:class="script_tag_color[tag]">{{ tag }}</ul>
+                                        <ul class="badge" style="margin: 0 15px 0 0" v-for="(tag,index) in tags[index + ( current_paging_number - 1 ) * paging_item_count]" v-bind:class="script_tag_color[tag]">{{ tag }}</ul>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
+                        </div>
+                        <div class="box-footer clearfix" style="margin: -20px 0 0 0">
+                                <ul class="pagination pagination-sm no-margin pull-right">
+                                    <li><a href="javascript:void(0)" v-on:click="current_paging_number > 1? show_paging_data(current_paging_number - 1): ''">«</a></li>
+                                    <li v-for="n in total_paging_count" v-bind:class="current_paging_number == n  ? 'active' : ''">
+                                        <a href="javascript:void(0)" v-on:click="show_paging_data(n)">{{ n }}</a>
+                                    </li>
+                                    <li><a href="javascript:void(0)" v-on:click="current_paging_number < total_paging_count? show_paging_data(current_paging_number + 1): ''">»</a></li>
+                                </ul>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-7">
@@ -280,7 +382,7 @@ desired effect
                         </div>
                         <div class="mailbox-controls">
                             <div class="btn-group" style="margin: 20px">
-                                <button type="button" class="btn bg-maroon" data-toggle="modal" data-target="#modal-modifyscript" onclick="vue_modifyscript.show_script_content()">
+                                <button type="button" class="btn bg-maroon" data-toggle="modal" data-target="#modal-modifyscript" onclick="modify_script_editor()" id="button_modify_script">
                                     <i class="fa fa-pencil-square-o"></i> 修改
                                 </button>
                             </div>
@@ -318,23 +420,84 @@ desired effect
 
         <!--修改脚本弹出的对话框-->
         <div class="modal fade" id="modal-modifyscript">
-            <div class="modal-dialog" style="width: 80%;height: 100%">
+            <div class="modal-dialog" style="width: 90%;">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" v-on:click="click_close_dialog()" aria-label="Close">
+                        <button type="button" class="close" data-dismiss="modal" onclick="reset_all_variables()" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                         <h4 class="modal-title">
                             <i class=" headline fa fa-pencil-square-o text-blue" style="padding: 0 10px 0 0 "></i>修改脚本</h4>
                     </div>
-                    <div class="modal-body">
-                        <div id="modify_editor"></div>
+                    <div class="modal-body" style="height: 655px">
+                        <div class="col-md-5">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">
+                                    <i class=" headline fa fa-pencil text-black" style="padding: 0 10px 0 0 "></i>修改脚本信息</h3>
+                            </div>
+                            <!-- /.box-header -->
+                            <!-- form start -->
+                            <form class="form-horizontal">
+                                <div class="box-body">
+                                    <div class="form-group-modifyscript" id="div_script_name_modifyscript">
+                                        <label class="col-sm-3 control-label">脚本名称</label>
+                                        <div class="input-group col-sm-6">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-newspaper-o" style="width: 12px"></i>
+                                            </div>
+                                            <input class="form-control" placeholder="脚本名称不能包含中文" id="modify_script_name" style="width: 350px;" onblur="check_script_name_isvalid()">
+                                        </div>
+                                        <span class="help-block" style="display:none;position:relative;left:25%;margin: 0 0 -20px 0" id="error_msg_exist_modifyscript">该脚本名称已经存在，请重新输入！</span>
+                                        <span class="help-block" style="display:none;position:relative;left:25%;margin: 0 0 -20px 0" id="error_msg_chinese_modifyscript">脚本名称不能包含中文，请重新输入！</span>
+                                        <!-- /.input group -->
+                                    </div>
+                                    <div class="form-group-modifyscript">
+                                        <label class="col-sm-3 control-label">标签(可选)</label>
+                                        <div class="input-group col-sm-7">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-tag" style="width: 12px"></i>
+                                            </div>
+                                            <select class="select2" multiple="multiple" id="select2_modifyscript">
+                                            </select>
+                                        </div>
+                                        <!-- /.input group -->
+                                    </div>
+                                    <div class="form-group-modifyscript" id="div_modifyscript_description">
+                                        <label class="col-sm-3 control-label">脚本描述</label>
+                                        <div class="input-group col-sm-4">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-list-ol" style="width: 12px"></i>
+                                            </div>
+                                            <textarea class="form-control" id="modify_script_description" onkeyup="textarea_words_deal()" style="height: 268px;width: 350px; resize: none;"
+                                                placeholder="最多输入74个字符"></textarea>
+                                        </div>
+                                        <!-- /.input group -->
+                                    </div>
+                                </div>
+                                <!-- /.box-body -->
+                            </form>
+                        </div>
+                        <div class="col-md-7">
+                            <div>
+                                <div class="box-header with-border">
+                                    <h3 class="box-title">
+                                        <i class=" headline fa fa-map-o text-black" style="padding: 0 10px 0 0 "></i>脚本内容
+                                    </h3>
+                                </div>
+                                <div class="box-body fade-enter-active fade-leave-active" id="div_modify_script">
+                                    <div id="modify_script_editor" style="border-style:solid;border-width:1px;border-color:#f1f1f1; height: 510px; background:#fbfbfb"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default pull-left" v-on:click="click_close_dialog()" data-dismiss="modal">
-                                <i class="fa fa-close"></i> 放弃修改
+                        <button type="button" class="btn btn-default pull-left" onclick="reset_all_variables()" data-dismiss="modal" id="modify_script_cancel_button">
+                            <i class="fa fa-close"></i> 放弃修改
                         </button>
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-submit-to-modify" >
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modal-submit-to-modify" style="display: none1;" id="button_modify_script_submit">
+                            <i class="fa fa-edit"></i> 保存修改
+                        </button>
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modal-submit-to-modify" disabled="disabled" style="display: none;" id="button_modify_script_cant_submit">
                                 <i class="fa fa-edit"></i> 保存修改
                         </button>
                     </div>
@@ -406,7 +569,7 @@ desired effect
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default pull-left" data-dismiss="modal">
                             <i class="fa fa-close"></i> 取消</button>
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="submit_modify_script()">
                             <i class="fa fa-check"></i> 确定</button>
                     </div>
                 </div>
@@ -547,8 +710,8 @@ desired effect
                                             </div>
                                             <input class="form-control" placeholder="脚本名称不能包含中文" id="new_script_name" style="width: 350px;" onblur="check_script_name_isvalid()">
                                         </div>
-                                        <span class="help-block" style="display:none;position:relative;left:25%;margin: 0 0 -20px 0" id="error_msg_exist_newscript">该脚本名称已经存在，请重新选择！</span>
-                                        <span class="help-block" style="display:none;position:relative;left:25%;margin: 0 0 -20px 0" id="error_msg_chinese_newscript">脚本名称不能包含中文，请重新选择！</span>
+                                        <span class="help-block" style="display:none;position:relative;left:25%;margin: 0 0 -20px 0" id="error_msg_exist_newscript">该脚本名称已经存在，请重新输入！</span>
+                                        <span class="help-block" style="display:none;position:relative;left:25%;margin: 0 0 -20px 0" id="error_msg_chinese_newscript">脚本名称不能包含中文，请重新输入！</span>
                                         <!-- /.input group -->
                                     </div>
                                     <div class="form-group-newscript">
@@ -618,10 +781,6 @@ desired effect
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <!-- Bootstrap 3.3.7 -->
     <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-    <!-- DataTables -->
-    <script src="bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-    <!-- DataTables -->
-    <script src="bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
     <!-- AdminLTE App slide navigator-->
     <script src="dist/js/adminlte.min.js"></script>
     <!--ACE editor-->
@@ -633,80 +792,192 @@ desired effect
 
     <!--shell check-->
     <script src="dist/js/shellcheck.js"></script>
-    
+
 
     <script>
-        //新建、导入和修改脚本时，对变动的脚本内容进行check
-        function shellcheck(script_content)
+        function submit_modify_script()
+        {        
+            jwt = localStorage.getItem('jwt');
+
+            //获取select2被选中的值
+            var select_content = $("#select2_modifyscript").select2("data");
+            var script_tags = ''
+            if (select_content.length) {
+                for (var i = 0; i < select_content.length; i++) {
+                    if (script_tags == '') {
+                        script_tags = select_content[i].text;
+                    }
+                    else {
+                        script_tags = script_tags + "#" + select_content[i].text;
+                    }
+                }
+            }
+            //获取上传的文件表单内容
+            var modify_script_name = document.getElementById("modify_script_name").value;
+            var modify_script_description = document.getElementById("modify_script_description").value;
+
+            axios.post('/api/modify_script_v1.0', {
+                script_content: ace.edit("modify_script_editor").getValue(),
+                script_name: modify_script_name,
+                script_tags: script_tags,
+                script_description: modify_script_description,
+                script_old_name: vue.scripts_info[vue.checkbox_status[0]].name,
+                visit_token: jwt
+            })
+                .then(function (response) {
+                    //console.log(response.data);
+                    if (response.data.modify_script == "modify_script_successful") {
+                        vue.fetch_all_script_info(vue.checkbox_status[0], 0);
+                        reset_all_variables();
+                        document.getElementById("modify_script_cancel_button").click();
+                        //window.location.reload();
+                    }
+                    else if (response.data.modify_script == "modify script error") {
+                        alert("modify script error!")
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+
+        function modify_script_editor()
         {
-            var editor = ace.edit("new_script_editor");
+            //获取当前选中的脚本相关信息，赋值到相关控件（名字、tags、描述）
+            var modify_script_name = document.getElementById("modify_script_name");
+            var modify_script_description = document.getElementById("modify_script_description");
+            var div_modifyscript_description = document.getElementById("div_modifyscript_description");
+            var div_script_name_modifyscript = document.getElementById("div_script_name_modifyscript");
+
+            //获取select2 的id和text的对应关系
+            var vals = [];
+            for( var i = 0; i < vue.tags[vue.checkbox_status[0]].length; i++ )
+            {
+                //console.log(vue.tags[vue.checkbox_status[0]][i])
+                $('#select2_modifyscript').find('*').filter(function () {
+                    if ($(this).text() === vue.tags[vue.checkbox_status[0]][i]) {
+                        vals.push($(this).val());
+                    }
+                });
+            }
+            $('#select2_modifyscript').val(vals).trigger("change");
+
+            modify_script_name.value = vue.scripts_info[vue.checkbox_status[0]].name;
+            modify_script_description.value = vue.show_script_description;
+
+            //初始化ace
+            $('#modify_script_editor').height(510);
+            var editor = ace.edit("modify_script_editor");
+            editor.setFontSize(16);
+            //高亮为shell
+            editor.session.setMode("ace/mode/sh");
+            //主题
+            editor.setTheme("ace/theme/sqlserver");
+            //可读写
+            editor.setReadOnly(false);
+            //打开行数
+            editor.renderer.setShowGutter(true);
+            //打开高亮
+            editor.setOption("highlightActiveLine", true);
+            editor.setOption("highlightGutterLine", true);
+            //关闭分隔线  
+            editor.setOption("showPrintMargin", false);
+            //打开光标
+            editor.renderer.$cursorLayer.element.style.display = "block";
+            //使用unix换行编码，省去替换/r的麻烦
+            editor.session.setNewLineMode("unix");
+
+            //显示变化的行
+            var modified = 'ace-changed';
+
+            //保存shellcheck结果
+            var shell_check_result = [];
+            editor.on('change', function (e) {
+                var activeLine = e.start.row;
+                if (e.action == "insert") {
+                    while (activeLine < (e.end.row + 1)) {
+                        editor.session.removeGutterDecoration(activeLine, modified);
+                        editor.session.addGutterDecoration(activeLine, modified);
+                        activeLine++;
+                    }
+                } else if (e.action == "remove") {
+                    while (activeLine < (e.end.row + 1)) {
+                        //editor.session.removeGutterDecoration(activeLine, modified);
+                        activeLine++;
+                    }
+                    editor.session.addGutterDecoration(e.start.row, modified);
+                }
+                //isreadytosubmit();
+                shellcheck(editor.getValue(), "modify_script_editor");
+            });
+            //先监听ace变化内容，再获取脚本内容，这样才能第一次触发shellcheck
+            editor.setValue(vue.script_content, 1);
+        }
+
+        //新建、导入和修改脚本时，对变动的脚本内容进行check
+        function shellcheck(script_content, editor_id) {
+            jwt = localStorage.getItem('jwt');
+
+            var editor = ace.edit(editor_id);
             var err = 'error';
             var warn = 'warning';
             var info = 'info';
             var style = "";
             var j_result = [];
-            var d_result = [];            
+            var d_result = [];
+
             axios.post("/api/shell_syntax_check_v1.0", {
-                script_content: script_content
+                script_content: script_content,
+                visit_token: jwt
             })
-            .then(function(response){
-                for(var i = 0; i < response.data.shell_check_result.length; i++)
-                {
-                    //console.log(response.data.shell_check_result[0].line)
-                    //console.log(response.data.shell_check_result[0].level)
-                    //console.log(response.data.shell_check_result[0].message)
-                    //console.log("code:" + response.data.shell_check_result[0].code + ":" + response.data.shell_check_result[0].message + " line:" + response.data.shell_check_result[0].line)
-                    if( response.data.shell_check_result[i].level == "error" )
-                    {
-                        style = err;
-                    }
-                    else if( response.data.shell_check_result[i].level == "warning" )
-                    {
-                        style = warn;
-                    }
-                    else if( response.data.shell_check_result[i].level == "info" )
-                    {
-                        style = info;
-                    }
-                    else if( response.data.shell_check_result[i].level == "style" )
-                    {
-                        style = info;
-                    }
-                    else
-                    {
-                        console.log("style error: new style:" + response.data.shell_check_result[i].level)
-                    }
-                    /*
-                    row: 第几行
-                    type: 提示的符号
-                    text: tip的内容
-                    */
-                    d_result = {row: response.data.shell_check_result[i].line - 1,type: style, text: "SC " + response.data.shell_check_result[i].code + ":" + response.data.shell_check_result[i].message}
-                    j_result.push(d_result);
-                }
-                if(editor.getValue() != "")
-                {
-                    editor.session.setAnnotations(j_result);
-                }
-                else
-                {
-                    editor.session.setAnnotations([
-                    {
-                        row: 0,
-                        type: "",
-                        text: ""
-                    }])
-                }
-            })
-            .catch(function(error){
-                console.log(error)
-            })
+                .then(function (response) {
+
+                    setTimeout(function () {
+                        for (var i = 0; i < response.data.shell_check_result.length; i++) {
+                            //console.log(response.data.shell_check_result[0].line)
+                            //console.log(response.data.shell_check_result[0].level)
+                            //console.log(response.data.shell_check_result[0].message)
+                            //console.log("code:" + response.data.shell_check_result[0].code + ":" + response.data.shell_check_result[0].message + " line:" + response.data.shell_check_result[0].line)
+                            if (response.data.shell_check_result[i].level == "error") {
+                                style = err;
+                            }
+                            else if (response.data.shell_check_result[i].level == "warning") {
+                                style = warn;
+                            }
+                            else if (response.data.shell_check_result[i].level == "info") {
+                                style = info;
+                            }
+                            else if (response.data.shell_check_result[i].level == "style") {
+                                style = info;
+                            }
+                            else {
+                                console.log("style error: new style:" + response.data.shell_check_result[i].level)
+                            }
+                            /*
+                            row: 第几行
+                            type: 提示的符号
+                            text: tip的内容
+                            */
+                            d_result = { row: response.data.shell_check_result[i].line - 1, type: style, text: "SC " + response.data.shell_check_result[i].code + ":" + response.data.shell_check_result[i].message }
+                            j_result.push(d_result);
+                        }
+                        if (editor.session.getValue() != "") {
+                            editor.session.setAnnotations(j_result);
+                        }
+                        else {
+                            editor.session.setAnnotations({ row: 0, type: "", text: "" });
+                        }
+
+                    }, 200);
+                })
+                .catch(function (error) {
+                    console.log(error)
+                })
         }
 
 
         //点击新建脚本时，初始化ace editor
-        function new_script_editor()
-        {
+        function new_script_editor() {
             $('#new_script_editor').height(510);
             var editor = ace.edit("new_script_editor");
             editor.setFontSize(16);
@@ -726,7 +997,7 @@ desired effect
             //打开光标
             editor.renderer.$cursorLayer.element.style.display = "block";
             //使用unix换行编码，省去替换/r的麻烦
-            editor.session.setNewLineMode("unix");        
+            editor.session.setNewLineMode("unix");
 
             //显示变化的行
             var modified = 'ace-changed';
@@ -747,79 +1018,118 @@ desired effect
                     }
                     editor.session.addGutterDecoration(e.start.row, modified);
                 }
-                isreadytoimport();
-                shellcheck(editor.getValue());
+                isreadytosubmit();
+                shellcheck(editor.getValue(), "new_script_editor");
             });
         }
 
         //查询脚本名是否有效，包含中文和已经存在均是无效
-        function check_script_name_isvalid()
-        {
+        function check_script_name_isvalid() {
             var script_name = document.getElementById("import_script_name");
             var new_script_name = document.getElementById("new_script_name");
+            var modify_script_name = document.getElementById("modify_script_name");
+
             var div_script_name = document.getElementById("div_script_name");
-            var check_name = "";
             var div_script_name_newscript = document.getElementById("div_script_name_newscript");
+            var div_script_name_modifyscript = document.getElementById("div_script_name_modifyscript");
+
             var error_msg_exist_script = document.getElementById("error_msg_exist_script");
             var error_msg_chinese_script = document.getElementById("error_msg_chinese_script");
             var error_msg_exist_newscript = document.getElementById("error_msg_exist_newscript");
             var error_msg_chinese_newscript = document.getElementById("error_msg_chinese_newscript");
+            var error_msg_exist_modifyscript = document.getElementById("error_msg_exist_modifyscript");
+            var error_msg_chinese_modifyscript = document.getElementById("error_msg_chinese_modifyscript");
 
-            if( script_name.value != "" )
-            {
-                check_name = script_name.value;
+            var check_name = "";
+
+            if (script_name.value != "") {
+                check_name = script_name.value.replace(/^\s+|\s+$/g, "");
             }
-            else if(new_script_name.value != "")
-            {
-                check_name = new_script_name.value;
+            else if (new_script_name.value != "") {
+                check_name = new_script_name.value.replace(/^\s+|\s+$/g, "");
                 error_msg_chinese_newscript.style.display = "none";
                 error_msg_exist_newscript.style.display = "none";
                 div_script_name_newscript.className = "form-group-newscript";
             }
-            else
-            {
+            else if (modify_script_name.value != "") {
+                //如果修改脚本，脚本名为原来的脚本名并不算是重复的脚本名
+                if( modify_script_name.value.replace(/^\s+|\s+$/g, "") == vue.scripts_info[vue.checkbox_status[0]].name )
+                {
+                    error_msg_chinese_modifyscript.style.display = "none";
+                    error_msg_exist_modifyscript.style.display = "none";
+                    div_script_name_modifyscript.className = "form-group-modifyscript";
+                    isreadytosubmit();
+                    return;
+                }
+                check_name = modify_script_name.value.replace(/^\s+|\s+$/g, "");
+                error_msg_chinese_modifyscript.style.display = "none";
+                error_msg_exist_modifyscript.style.display = "none";
+                div_script_name_modifyscript.className = "form-group-modifyscript";
+            }
+            else {
                 console.log("script_name is not input!")
             }
             //先检查脚本名是否包含中文
             if (/.*[\u4e00-\u9fa5]+.*$/.test(check_name)) {
                 div_script_name.className = "form-group has-error";
-                error_msg_chinese_script.style.display = "";                
+                error_msg_chinese_script.style.display = "";
+                error_msg_exist_script.style.display = "none";
+
                 div_script_name_newscript.className = "form-group-newscript has-error";
                 error_msg_chinese_newscript.style.display = "";
                 error_msg_exist_newscript.style.display = "none";
+
+                div_script_name_modifyscript.className = "form-group-modifyscript has-error";
+                error_msg_chinese_modifyscript.style.display = "";
+                error_msg_exist_modifyscript.style.display = "none";
             }
             //再检查脚本名是否已经存在
             else {
+                jwt = localStorage.getItem('jwt');
                 axios.post('/api/fetch_script_content_v1.0', {
-                    script_name: check_name
+                    script_name: check_name,
+                    visit_token: jwt
                 })
-                .then(function (response) {
-                    if (response.data.script_content != "can not fetch any script content!") {
-                        //console.log("already exist!");
-                        div_script_name.className = "form-group has-error";
-                        error_msg_exist_script.style.display = "";
-                        div_script_name_newscript.className = "form-group-newscript has-error";
-                        error_msg_exist_newscript.style.display = "";
-                        error_msg_chinese_newscript.style.display = "none";
-                    }
-                    else {
-                        div_script_name.className = "form-group";
-                        error_msg_exist_script.style.display = "none";
-                        div_script_name_newscript.className = "form-group-newscript";
-                        error_msg_exist_newscript.style.display = "none";
-                        error_msg_chinese_newscript.style.display = "none";
-                        //console.log("not exist!");
-                    }
-                })
-                .catch(function (error) {
-                    console.log(error)
-                })
+                    .then(function (response) {
+                        if (response.data.script_content != "can not fetch any script content!") {
+                            //console.log("already exist!");
+                            div_script_name.className = "form-group has-error";
+                            error_msg_exist_script.style.display = "";
+                            error_msg_chinese_script.style.display = "none";
+
+                            div_script_name_newscript.className = "form-group-newscript has-error";
+                            error_msg_exist_newscript.style.display = "";
+                            error_msg_chinese_newscript.style.display = "none";
+
+                            div_script_name_modifyscript.className = "form-group-modifyscript has-error";
+                            error_msg_exist_modifyscript.style.display = "";
+                            error_msg_chinese_modifyscript.style.display = "none";
+                        }
+                        else {
+                            div_script_name.className = "form-group";
+                            error_msg_exist_script.style.display = "none";
+                            error_msg_chinese_script.style.display = "none";
+
+                            div_script_name_newscript.className = "form-group-newscript";
+                            error_msg_exist_newscript.style.display = "none";
+                            error_msg_chinese_newscript.style.display = "none";
+
+                            div_script_name_modifyscript.className = "form-group-modifyscript";
+                            error_msg_exist_modifyscript.style.display = "none";
+                            error_msg_chinese_modifyscript.style.display = "none";
+                            //console.log("not exist!");
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                    })
             }
-            isreadytoimport();
+            //由于上面有axios的后台查询，建议使用settimeout来调用check，万一axios返回值比较慢时，可能会出现先检查了值才赋好的情况，正常是先赋值再检查
+            setTimeout(function(){isreadytosubmit()}, 300);
         }
 
         //对话框中，仅当必填选项都有值并且脚本名称不存在重复时，确认导入按钮才可用，否则是不可用状态，不能上传
-        function isreadytoimport() {
+        function isreadytosubmit() {
             //导入脚本对话框
             var upload_path = document.getElementById("upload_path");
             var script_name = document.getElementById("import_script_name");
@@ -831,26 +1141,40 @@ desired effect
             var new_script_description = document.getElementById("new_script_description");
             var div_script_name_newscript = document.getElementById("div_script_name_newscript");
 
-            if (upload_path.value != "" && script_name.value != "" && import_script_description.value != "" && div_script_name.className != "form-group has-error") 
+            //修改脚本对话框
+            var modify_script_name = document.getElementById("modify_script_name");
+            var modify_script_description = document.getElementById("modify_script_description");
+            var div_script_name_modifyscript = document.getElementById("div_script_name_modifyscript");            
+
+
+            if (upload_path.value != "" && script_name.value != "" && import_script_description.value != "" && div_script_name.className != "form-group has-error" && ace.edit("browse_script_editor").getValue().replace(/^\s+|\s+$/g, "") != "") //去除两边空格，防止导入空格文本
             {
                 document.getElementById("button_import_script_submit").style.display = '';
                 document.getElementById("button_import_script_cant_submit").style.display = 'none';
             }
-            else 
-            {
+            else {
                 document.getElementById("button_import_script_submit").style.display = 'none';
                 document.getElementById("button_import_script_cant_submit").style.display = '';
             }
-
-            if(new_script_name.value != "" && new_script_description.value != "" && div_script_name_newscript.className != "form-group-newscript has-error" && ace.edit("new_script_editor").getValue().replace(/^\s+|\s+$/g,"") != "") //去除两边空格，防止新建空格文本
+            
+            if (new_script_name.value != "" && new_script_description.value != "" && div_script_name_newscript.className != "form-group-newscript has-error" && ace.edit("new_script_editor").getValue().replace(/^\s+|\s+$/g, "") != "") //去除两边空格，防止新建空格文本
             {
                 document.getElementById("button_new_script_submit").style.display = '';
                 document.getElementById("button_new_script_cant_submit").style.display = 'none';
             }
-            else
-            {
+            else {
                 document.getElementById("button_new_script_submit").style.display = 'none';
                 document.getElementById("button_new_script_cant_submit").style.display = '';
+            }
+
+            if (modify_script_name.value != "" && modify_script_description.value != "" && div_script_name_modifyscript.className != "form-group-modifyscript has-error" && ace.edit("modify_script_editor").getValue().replace(/^\s+|\s+$/g, "") != "") //去除两边空格，防止修改为空格文本
+            {
+                document.getElementById("button_modify_script_submit").style.display = '';
+                document.getElementById("button_modify_script_cant_submit").style.display = 'none';
+            }
+            else {
+                document.getElementById("button_modify_script_submit").style.display = 'none';
+                document.getElementById("button_modify_script_cant_submit").style.display = '';
             }
         }
 
@@ -864,6 +1188,7 @@ desired effect
             var div_script_name = document.getElementById("div_script_name");
             var error_msg_exist_script = document.getElementById("error_msg_exist_script");
             var error_msg_chinese_script = document.getElementById("error_msg_chinese_script");
+            var browse_script_editor = ace.edit("browse_script_editor");
 
             //新建脚本对话框元素
             var new_script_name = document.getElementById("new_script_name");
@@ -871,22 +1196,40 @@ desired effect
             var div_script_name_newscript = document.getElementById("div_script_name_newscript");
             var error_msg_exist_newscript = document.getElementById("error_msg_exist_newscript");
             var error_msg_chinese_newscript = document.getElementById("error_msg_chinese_newscript");
-            
+            var new_script_editor = ace.edit("new_script_editor");
+
+            //修改脚本对话框元素
+            var modify_script_name = document.getElementById("modify_script_name");
+            var modify_script_description = document.getElementById("modify_script_description");
+            var div_script_name_modifyscript = document.getElementById("div_script_name_modifyscript");
+            var error_msg_exist_modifyscript = document.getElementById("error_msg_exist_modifyscript");
+            var error_msg_chinese_modifyscript = document.getElementById("error_msg_chinese_modifyscript");
+            var new_script_editor = ace.edit("modify_script_editor");
+
 
             upload_path.value = '';
             script_name.value = '';
             new_script_name.value = '';
+            modify_script_name.value = '';
+
             div_script_name.className = "form-group";
             div_script_name_newscript.className = "form-group-newscript";
+            div_script_name_modifyscript.className = "form-group-modifyscript";
+
             error_msg_exist_script.style.display = "none";
             error_msg_chinese_script.style.display = "none";
             error_msg_exist_newscript.style.display = "none";
             error_msg_chinese_newscript.style.display = "none";
+            error_msg_exist_modifyscript.style.display = "none";
+            error_msg_chinese_modifyscript.style.display = "none";
+
             import_script_description.value = '';
             new_script_description.value = '';
+            modify_script_description.value = '';
+
             invisible_upload_button.value = '';
             $('.select2').val(null).trigger('change');
-            ace.edit("browse_script_editor").setValue(" ", 1);
+            ace.edit("browse_script_editor").setValue("", 1);
             ace.edit("browse_script_editor").setReadOnly(true);
             ace.edit("browse_script_editor").setOption("highlightActiveLine", false);
             ace.edit("browse_script_editor").setOption("highlightGutterLine", false);
@@ -894,6 +1237,7 @@ desired effect
             ace.edit("browse_script_editor").setOption("showPrintMargin", false);
             ace.edit("browse_script_editor").renderer.$cursorLayer.element.style.display = "none";
             ace.edit("new_script_editor").setValue("", 1);
+            ace.edit("modify_script_editor").setValue("", 1);
         }
 
         //处理导入脚本对话框的浏览按钮
@@ -912,13 +1256,23 @@ desired effect
             error_msg_exist_script.style.display = "none";
             error_msg_chinese_script.style.display = "none";
 
-            //首先判断点击浏览后，在弹出的选择文件的对话框点击了确认，还是取消
+            var editor = ace.edit("browse_script_editor");
+            editor.container.parentNode.replaceChild(editor.container.cloneNode(true), editor.container);
+
+            //首先判断点击浏览后，在弹出的选择文件的对话框点击了确认，还是取消，点击取消要重置浏览脚本的ace editor
             if (invisible_value.files[0] == undefined) {
                 visible_value.value = "";
                 script_name.value = "";
                 ace.edit("browse_script_editor").setValue("", 1);
+                ace.edit("browse_script_editor").setReadOnly(true);
+                ace.edit("browse_script_editor").setOption("highlightActiveLine", false);
+                ace.edit("browse_script_editor").setOption("highlightGutterLine", false);
+                ace.edit("browse_script_editor").renderer.setShowGutter(false);
+                ace.edit("browse_script_editor").setOption("showPrintMargin", false);
+                ace.edit("browse_script_editor").renderer.$cursorLayer.element.style.display = "none";
+                ace.edit("new_script_editor").setValue("", 1);
                 div_script_name.className = "form-group";
-                isreadytoimport();
+                isreadytosubmit();
             }
             else {
                 //过渡效果，先把显示的div设置opacity为0，最后为1
@@ -938,6 +1292,11 @@ desired effect
                     setTimeout(function () {
                         $('#browse_script_editor').height(510);
                         var editor = ace.edit("browse_script_editor");
+
+                        editor.on('change', function (e) {
+                            shellcheck(script_content, "browse_script_editor");
+                        });
+
                         editor.setFontSize(16);
                         //高亮为shell
                         editor.session.setMode("ace/mode/sh");
@@ -945,8 +1304,8 @@ desired effect
                         editor.setTheme("ace/theme/sqlserver");
                         //只读
                         editor.setReadOnly(true);
-                        //关闭行数
-                        editor.renderer.setShowGutter(false);
+                        //打开行数
+                        editor.renderer.setShowGutter(true);
                         //关闭高亮
                         editor.setOption("highlightActiveLine", false)
                         editor.setOption("highlightGutterLine", false)
@@ -956,26 +1315,30 @@ desired effect
                         editor.renderer.$cursorLayer.element.style.display = "none"
                         editor.setValue(script_content, 1);
                         //使用unix换行编码，省去替换/r的麻烦
-                        editor.session.setNewLineMode("unix"); 
+                        editor.session.setNewLineMode("unix");
                         //过渡效果，最后把显示的div设置opacity为1
                         document.getElementById("div_preview_script").style.opacity = 1;
+
                     }, 300);
-                    
+
                     /*
                     注意，这里检查完是否已经存在导入的脚本（check_script_name_isvalid）后，
-                    不能马上调用isreadytoimport来检查状态，原因是
+                    不能马上调用isreadytosubmit来检查状态，原因是
                     check_script_name_isvalid中查看是否存在脚本是使用axios来返回脚本内容，
                     但是axios是异步调用，response可能不能及时返回（有延时），
-                    所以正确的方式是使用setTimeout来推迟isreadytoimport（）检查状态
+                    所以正确的方式是使用setTimeout来推迟isreadytosubmit（）检查状态
                     */
                     check_script_name_isvalid();
-                    //isreadytoimport()
-                    setTimeout(function(){isreadytoimport()}, 500);
+
+                    //isreadytosubmit()
+                    setTimeout(function () { isreadytosubmit() }, 500);
                 }
             }
         }
         //导入脚本按钮
         function upload_script() {
+            jwt = localStorage.getItem('jwt');
+
             //获取select2被选中的值
             var select_content = $("#select2").select2("data");
             var script_tags = ''
@@ -1001,12 +1364,13 @@ desired effect
                     script_content: this.result,
                     script_name: import_script_name,
                     script_tags: script_tags,
-                    script_description: import_script_description
+                    script_description: import_script_description,
+                    visit_token: jwt
                 })
                     .then(function (response) {
                         //console.log(response.data);
                         if (response.data.import_script == "import_script_successful") {
-                            vue.fetch_all_script_info();
+                            vue.fetch_all_script_info(vue.scripts_info.length, 0);
                             reset_all_variables();
                             //window.location.reload();
                         }
@@ -1020,7 +1384,9 @@ desired effect
             }
         }
         //新建脚本对话框的确定按钮
-        function new_script_submit(){
+        function new_script_submit() {
+            jwt = localStorage.getItem('jwt');
+
             //获取select2被选中的值
             var select_content = $("#select2_newscript").select2("data");
             var new_script_tags = '';
@@ -1043,16 +1409,17 @@ desired effect
                 script_content: ace_editor.getValue(),
                 script_name: new_script_name,
                 script_tags: new_script_tags,
-                script_description: new_script_description
+                script_description: new_script_description,
+                visit_token: jwt
             })
                 .then(function (response) {
                     //console.log(response.data);
                     if (response.data.import_script == "import_script_successful") {
-                        vue.fetch_all_script_info();
+                        vue.fetch_all_script_info(vue.scripts_info.length, 0);
                         reset_all_variables();
                         //window.location.reload();
                     }
-                    else{
+                    else {
                         alert("create new script error")
                     }
                 })
@@ -1062,7 +1429,11 @@ desired effect
         }
         //获取script tags的值放到select2控件
         function get_tags_to_select2() {
-            axios.get('/api/fetch_all_script_tags_v1.0')
+            jwt = localStorage.getItem('jwt');
+
+            axios.post('/api/fetch_all_script_tags_v1.0',{
+                visit_token: jwt
+            })
                 .then(function (response) {
                     //console.log(response.data.script_tags);
                     var data = response.data.script_tags;
@@ -1110,21 +1481,21 @@ desired effect
                 var num = $("#import_script_description").val().substr(0, 74);
                 $("#import_script_description").val(num);
                 div_importscript_description.className = "form-group has-error";
-                setTimeout(function(){div_importscript_description.className = "form-group"}, 500);
+                setTimeout(function () { div_importscript_description.className = "form-group" }, 500);
             }
 
             if (new_script_curLength > 74) {
                 var num = $("#new_script_description").val().substr(0, 74);
                 $("#new_script_description").val(num);
                 div_newscript_description.className = "form-group-newscript has-error";
-                setTimeout(function(){div_newscript_description.className = "form-group-newscript"}, 500);
-            }           
-            isreadytoimport();
+                setTimeout(function () { div_newscript_description.className = "form-group-newscript" }, 500);
+            }
+            isreadytosubmit();
         }
 
 
 
-
+/*
         //修改脚本对话框
         var vue_modifyscript = new Vue({
             el: '#modal-modifyscript',
@@ -1155,7 +1526,7 @@ desired effect
                     editor.renderer.$cursorLayer.element.style.display = "block";
                     editor.setValue(self.script_content, -1);
                     //使用unix换行编码，省去替换/r的麻烦
-                    editor.session.setNewLineMode("unix"); 
+                    editor.session.setNewLineMode("unix");
 
                     self.show_change_line();
                 },
@@ -1182,17 +1553,17 @@ desired effect
                     });
                 },
                 //重置ace，对话框关闭后，重置ace editor，不显示变化行的样式
-                click_close_dialog: function() {
+                click_close_dialog: function () {
                     var editor = ace.edit("modify_editor");
                     //reset ace css style
                     editor.container.parentNode.replaceChild(editor.container.cloneNode(true), editor.container)
                 },
-                save_modify: function(){
+                save_modify: function () {
                     var self = this;
                 }
             }
         });
-
+*/
 
 
         //脚本列表，主界面
@@ -1210,28 +1581,56 @@ desired effect
                 ismulti: '多选',            //标识是否为多选状态
                 show_script_description: '',//保存脚本描述的内容
                 script_tag_color: [],       //保存脚本标签颜色，不同脚本标签代表不同的颜色
+                total_paging_count: 0,      //一个多少个分页
+                paging_scripts_info: [],    //显示当前的分页项目
+                paging_item_count: 12,      //每页显示多少条数据
+                current_paging_number: 1,   //记录当前哪个分页被选中
             },
             mounted: function () {
                 var self = this;
-                self.fetch_all_script_info();
+                self.fetch_all_script_info(0, 1);
                 setTimeout(function () { self.loading_status = 1 }, 400);
                 get_tags_to_select2();
             },
             methods: {
+                show_paging_data: function(n){
+                    var self = this;
+                    var is_first_load = self.paging_scripts_info.length;
+
+                    //多少个分页=数据总条数/每页显示数
+                    self.total_paging_count = Math.ceil(self.scripts_info.length / self.paging_item_count);
+
+                    //获取当前哪个分页被选中
+                    self.current_paging_number = n;
+
+                    self.paging_scripts_info = [];
+
+                    for( var i = 0; i < self.paging_item_count; i++ )
+                    {
+                        if( (self.current_paging_number - 1) * self.paging_item_count + i < self.scripts_info.length )
+                        {
+                            self.paging_scripts_info.push( self.scripts_info[ (self.current_paging_number - 1) * self.paging_item_count + i ] );
+                            //console.log((self.current_paging_number - 1) * self.paging_item_count + i)
+                        }
+                    }
+                },
                 delete_script: function () {
+                    jwt = localStorage.getItem('jwt');
+
                     var self = this;
                     var select_script_names = [];
                     for (var i = 0; i < self.checkbox_status.length; i++) {
                         select_script_names[i] = self.scripts_info[self.checkbox_status[i]].name;
                     }
                     axios.post('/api/delete_script_v1.0', {
-                        select_script_names: select_script_names
+                        select_script_names: select_script_names,
+                        visit_token: jwt
                     })
                         .then(function (response) {
                             if (response.data.delete_script_result == "delete complete!") {
-                                self.fetch_all_script_info();
-                                self.open_multiselect();
-                                //window.location.reload();
+                                self.fetch_all_script_info(0, 1);
+                                self.single_select_row_temp = self.checkbox_status[0];
+                                self.ismulti = '多选';
                             }
                             else {
                                 alert("not ok")
@@ -1250,28 +1649,45 @@ desired effect
                         self.checkbox_status.push(self.single_select_row_temp);
                         self.table_selected = [];
                         Vue.set(self.table_selected, self.single_select_row_temp, "table-selected");
+                        document.getElementById("button_modify_script").disabled = "";
                     }
                     else if (self.ismulti == '多选') {
                         self.ismulti = '单选';
                         self.single_select_row_temp = self.checkbox_status[0];
+                        document.getElementById("button_modify_script").disabled = "disabled";
                     }
                 },
-                save_script_content: function () {
+                fetch_all_script_info: function (selected_line, page_number) {
                     var self = this;
-                },
-                fetch_all_script_info: function () {
-                    var self = this;
+                    jwt = localStorage.getItem('jwt');
                     self.scripts_info = [];
-                    axios.get('/api/fetch_all_scripts_v1.0')
+                    axios.post('/api/fetch_all_scripts_v1.0',{
+                        visit_token: jwt
+                    })
                         .then(function (response) {
                             //console.log(response.data.script)
                             for (var i = 0; i < response.data.script.length; i++) {
                                 Vue.set(self.scripts_info, i, response.data.script[i]);
                                 self.tags[i] = self.scripts_info[i].tag.split("#");
                             }
-                            //设置第一行被选中，默认显示第一个脚本信息
-                            self.set_selected_status(0);
-                            self.show_script_content(0, self.scripts_info[0].name);
+
+                            //设置第几行被选中，显示第几个脚本内容，显示第几分页
+                            self.set_selected_status(selected_line);
+                            self.show_script_content(selected_line, self.scripts_info[selected_line].name);
+
+                            //新建脚本、导入脚本、修改脚本
+                            if( page_number == 0 )
+                            {
+                                self.current_paging_number = Math.ceil(self.scripts_info.length / self.paging_item_count);
+                            }
+                            //删除脚本、第一次读入页面
+                            else
+                            {
+                                self.current_paging_number = page_number;
+                            }
+
+                            //初始化分页标签
+                            self.show_paging_data(self.current_paging_number);
                         })
                         .catch(function (error) {
                             //清空脚本信息状态
@@ -1314,13 +1730,16 @@ desired effect
                         self.set_selected_status(index);
                     }
                     else if (self.ismulti == '多选') {
+                        jwt = localStorage.getItem('jwt');
+
                         //过渡显示效果
                         self.script_loading_status = 0;
                         setTimeout(function () { self.script_loading_status = 1 }, 300);
                         self.set_selected_status(index);
 
                         axios.post('/api/fetch_script_content_v1.0', {
-                            script_name: script_name
+                            script_name: script_name,
+                            visit_token: jwt
                         })
                             .then(function (response) {
                                 for (var i = 0; i < response.data.script_content.length; i++) {
@@ -1359,7 +1778,7 @@ desired effect
                                     editor.renderer.$cursorLayer.element.style.display = "none";
                                     editor.setValue(self.script_content, 1);
                                     //使用unix换行编码，省去替换/r的麻烦
-                                    editor.session.setNewLineMode("unix"); 
+                                    editor.session.setNewLineMode("unix");
                                 }, 300);
                                 //console.log(self.script_content)
                             })

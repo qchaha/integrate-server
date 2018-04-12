@@ -61,10 +61,104 @@ desired effect
     ------------------------>
     <script src="dist/module-js/main-header.js"></script>
 
-    <!------------------------------------------
+        <!------------------------------------------
     Left side column. contains the logo and sidebar
+            <script src="dist/module-js/main-sidebar.js"></script>
     -------------------------------------------->
-    <script src="dist/module-js/main-sidebar.js"></script>
+
+    <aside class='main-sidebar'>
+        <!-- sidebar: style can be found in sidebar.less -->
+        <section class='sidebar'>
+            <!-- Sidebar Menu -->
+            <ul class='sidebar-menu' data-widget='tree'>
+                <li class='header'>主导航</li>
+                <!-- Optionally, you can add icons to the links -->
+                <li class="active">
+                    <a href='system-summary.html'>
+                        <i class='fa fa-dashboard'></i>
+                        <span>系统总体情况</span>
+                    </a>
+                </li>
+                <li>
+                    <a href='hosts.html'>
+                        <i class='fa fa-desktop'></i>
+                        <span>主机</span>
+                    </a>
+                </li>
+                <li class='treeview'>
+                    <a href='#'>
+                        <i class='fa fa-database'></i>
+                        <span>数据库</span>
+                        <span class='pull-right-container'>
+                            <i class='fa fa-angle-left pull-right'></i>
+                        </span>
+                    </a>
+                    <ul class='treeview-menu'>
+                        <li>
+                            <a href='#'>
+                                <i class='fa fa-th' style='margin: 0 10px 0 0'></i>数据库管理</a>
+                        </li>
+                        <li>
+                            <a href='#'>
+                                <i class='fa fa-copy' style='margin: 0 10px 0 0'></i>数据库备份管理</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href='#'>
+                        <i class='fa fa-cubes'></i>
+                        <span>虚拟化</span>
+                    </a>
+                </li>
+                <li>
+                    <a href='#'>
+                        <i class='icon ion-android-phone-landscape' style='margin: 0 10px 0 0'></i>
+                        <span>云终端</span>
+                    </a>
+                </li>
+                <li class='treeview'>
+                    <a href='#'>
+                        <i class='fa fa-wrench'></i>
+                        <span>自动化管理</span>
+                        <span class='pull-right-container'>
+                            <i class='fa fa-angle-left pull-right'></i>
+                        </span>
+                    </a>
+                    <ul class='treeview-menu'>
+                        <li>
+                            <a href='scriptmanage.html'>
+                                <i class='fa fa-file-code-o' style='margin: 0 10px 0 0'></i>脚本管理</a>
+                        </li>
+                        <li>
+                            <a href='processesmanage.html'>
+                                <i class='fa fa-object-group' style='margin: 0 10px 0 0'></i>流程管理</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class='treeview'>
+                    <a href='#'>
+                        <i class='fa fa-gears' style='margin: 0 4px 0 0'></i>
+                        <span>设置</span>
+                        <span class='pull-right-container'>
+                            <i class='fa fa-angle-left pull-right'></i>
+                        </span>
+                    </a>
+                    <ul class='treeview-menu'>
+                        <li>
+                            <a href='#'>
+                                <i class='fa fa-user' style='margin: 0 10px 0 0'></i>用户管理</a>
+                        </li>
+                        <li>
+                            <a href='#'>
+                                <i class='fa fa-cog' style='margin: 0 10px 0 0'></i>系统设置</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <!-- /.sidebar-menu -->
+        </section>
+        <!-- /.sidebar -->
+    </aside>
 
     <!------------------------------------------
     Content Wrapper. Contains page content

@@ -98,7 +98,7 @@ class Scripts:
             db.commit()
             db.close()
         except:
-            print("error insert data to add_script from mysql!")
+            print("error insert data to import_script from mysql!")
             abort(404)
         return "import_script_successful"
 
@@ -173,4 +173,35 @@ class Scripts:
         json_results = json.loads(tuple_results)
         #print(json_results)
         return json_results
+
+    def modify_script(self, script_content, script_name, script_tags, script_descript, script_old_name):
+        full_path = self.script_path + script_old_name
+        #判断文件是否存在
+        if os.path.exists(full_path) == False:
+            return "script is not exitst, please contact your administrator"
+        else:
+            cmd = "/bin/mv " + self.script_path + script_old_name +  " " + self.script_trash_path + script_old_name + time.strftime("_%Y%m%d%H%M%S", time.localtime())
+            try:
+                subprocess.call(cmd,shell=True,stdout=open('/dev/null','w'),stderr=subprocess.STDOUT)
+            except:
+                print("backup modify script error")
+                abort(404)
+            try:
+                with open(self.script_path + script_name, 'wt', encoding='utf-8') as f:
+                    f.write(script_content)
+            except:
+                print("error in writing modify script!")
+                abort(404)
+            db = pymysql.connect(self.mysql_srvip, self.mysql_user, self.mysql_pwd, self.mysql_db_name, charset="utf8")
+            cursor = db.cursor()
+            sql = "update script set path='{0}',name='{1}',tag='{2}',description='{3}' where name='{4}'".format(self.script_path + script_name, script_name, script_tags, script_descript, script_old_name)
+            #print(a.encode("utf-8"))
+            try:
+                cursor.execute(sql)
+                db.commit()
+                db.close()
+            except:
+                print("error insert data to modify_script from mysql!")
+                abort(404)
+        return "modify_script_successful"
 
